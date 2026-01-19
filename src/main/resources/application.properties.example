@@ -6,3 +6,10 @@ spring.datasource.password=$125RTA0190a
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 mybatis.configuration.map-underscore-to-camel-case=true
+git add src/main/resources/application.properties.example
+
+Ctrl + O
+
+
+
+
