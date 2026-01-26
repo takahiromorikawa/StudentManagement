@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
+
 @SpringBootApplication
 @RestController
 public class Application {
@@ -15,24 +17,24 @@ public class Application {
   private StudentRepository studentRepository;
 
   @Autowired
-  private raisetech.student.management.StudentsCoursesRepository studentsCoursesRepository;
+  private StudentsCoursesRepository studentsCoursesRepository;
 
 
-  public static void main(String[] args) {
-    SpringApplication.run(Application.class, args);
-	}
 
 @GetMapping("/studentList")
   public List <Student> getStudentList() {
-    return studentRepository.search();
+   return studentRepository.search();
 }
 
 @GetMapping("/studentsCourses")
-  public List<raisetech.student.management.Students_courses> getStudentsCoursesList() {
+  public List<StudentsCourses> getStudentsCoursesList() {
     return studentsCoursesRepository.search();
   }
 
+public static void main(String[] args) {
+  SpringApplication.run(Application.class, args);
 
 
+}
 
 }
