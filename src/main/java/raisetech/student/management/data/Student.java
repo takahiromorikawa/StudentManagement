@@ -15,4 +15,6 @@ public class Student {
   private String live;
   private String sex;
   private String id;
+  private String remark;
+  private boolean isDeleted;
 }
