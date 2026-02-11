@@ -1,9 +1,6 @@
 package raisetech.student.management.controller;
 
-import jakarta.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,7 +8,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentsCourses;
@@ -41,11 +37,6 @@ public class StudentController {
 
   }
 
-
-  //@GetMapping("/studentsCoursesList")
-  //public List<StudentsCourses> getStudentsCoursesList() {
-   // return service.searchStudentsCoursesList();
-  //}
 
   @GetMapping("/newStudent")
   public String newStudent(Model model) {
