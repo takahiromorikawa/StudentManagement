@@ -19,5 +19,4 @@ public interface StudentRepository {
   "VALUES (#{name}, #{age}, #{nameKana}, #{nickname}, #{mailaddress}, #{live}, #{sex},#{id})")
   void insertStudent(Student student);
 
-
 }

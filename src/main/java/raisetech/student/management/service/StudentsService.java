@@ -16,12 +16,10 @@ public class StudentsService {
   private final StudentRepository studentRepository;
   private final StudentsCoursesRepository studentsCoursesRepository;
 
-
   @Autowired
   public StudentsService(
       StudentRepository studentRepository,
       StudentsCoursesRepository studentsCoursesRepository) {
-
     this.studentRepository = studentRepository;
     this.studentsCoursesRepository = studentsCoursesRepository;
   }
@@ -31,35 +29,28 @@ public class StudentsService {
     return studentRepository.search();
   }
 
-  //絞り込みをする。年齢が30代の人のみを抽出する。
-  //抽出したリストをControllerに返す。
-  //public List<Student> searchStudentsIn30s() {
-    //return studentRepository.searchIn30s();}
-
   public List<StudentsCourses> searchStudentsCoursesList() {
     return studentsCoursesRepository.search();
   }
 
-  //絞り込み検索で「Javaコース」のコース情報のみを抽出する。
-  //抽出したリストをControllerに返す。
-//public List<StudentsCourses> searchInJava() {
-    //return studentsCoursesRepository.searchInJava();}
+  public void registerStudent(StudentDetail studentDetail) {
+    Student s = studentDetail.getStudent();
 
+    // IDが空なら採番（画面で入力しなくていい）
+    if (s.getId() == null) {
+      s.setId(UUID.randomUUID().toString());
+    }
 
+    // students に保存
+    studentRepository.insertStudent(s);
 
-public void registerStudent(StudentDetail studentDetail) {
-  Student s = studentDetail.getStudent();
-
-  // IDが空なら採番（画面で入力しなくていい）
-  if (s.getId() == null) {
-    s.setId(UUID.randomUUID().toString());
+    // コースも保存
+    if (studentDetail.getStudentsCourses() != null) {
+      for (StudentsCourses sc : studentDetail.getStudentsCourses()) {
+        sc.setStudentsId(s.getId());   // ★DBは students_ID
+        studentsCoursesRepository.insert(sc);
+      }
+    }
   }
-
-  studentRepository.insertStudent(s);
-
 }
 
-
-
-
-}

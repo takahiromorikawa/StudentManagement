@@ -11,6 +11,17 @@
     <input type="text" id="name" th:field="*{student.name}" required />
   </div>
   <div>
+
+    <!-- コース -->
+      <label>コース名:</label>
+      <select th:field="*{studentsCourses[0].courseName}" required>
+        <option value="" disabled selected>選択してください</option>
+        <option value="Javaコース">Javaコース</option>
+        <option value="デザインコース">デザインコース</option>
+        <option value="動画編集コース">動画編集コース</option>
+        <option value="Webアプリ開発コース">Webアプリ開発コース</option>
+      </select>
+
     <button type="submit">登録</button>
   </div>
 </form>
