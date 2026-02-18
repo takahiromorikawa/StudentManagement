@@ -31,20 +31,10 @@ public class StudentsService {
     return studentRepository.search();
   }
 
-  //絞り込みをする。年齢が30代の人のみを抽出する。
-  //抽出したリストをControllerに返す。
-  //public List<Student> searchStudentsIn30s() {
-    //return studentRepository.searchIn30s();}
 
   public List<StudentsCourses> searchStudentsCoursesList() {
     return studentsCoursesRepository.search();
   }
-
-  //絞り込み検索で「Javaコース」のコース情報のみを抽出する。
-  //抽出したリストをControllerに返す。
-//public List<StudentsCourses> searchInJava() {
-    //return studentsCoursesRepository.searchInJava();}
-
 
 
 public void registerStudent(StudentDetail studentDetail) {
@@ -55,11 +45,22 @@ public void registerStudent(StudentDetail studentDetail) {
     s.setId(UUID.randomUUID().toString());
   }
 
+  // students に保存
   studentRepository.insertStudent(s);
 
+  // コースも保存
+  if (studentDetail.getStudentsCourses() != null) {
+    for (StudentsCourses sc : studentDetail.getStudentsCourses()) {
+      sc.setStudentsId(s.getId());   // ★DBは students_ID
+      studentsCoursesRepository.insert(sc);
+    }
+  }
+
+
+  }
+
+  public List<Student> searchStudentsWithCourse() {
+    return studentRepository.findStudentsWithCourse();
+
 }
-
-
-
-
 }

@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import raisetech.student.management.data.Student;
 
+
 @Mapper
 public interface StudentRepository {
 
@@ -18,6 +19,18 @@ public interface StudentRepository {
   @Insert("INSERT INTO students (name,age,name_kana,nickname,mailaddress,live,sex,ID) " +
   "VALUES (#{name}, #{age}, #{nameKana}, #{nickname}, #{mailaddress}, #{live}, #{sex},#{id})")
   void insertStudent(Student student);
+
+  @Select("""
+SELECT
+  s.ID,
+  s.name,
+  sc.course_name
+FROM students s
+LEFT JOIN students_courses sc
+  ON s.ID = sc.students_ID
+""")
+  List<Student> findStudentsWithCourse();
+
 
 
 }

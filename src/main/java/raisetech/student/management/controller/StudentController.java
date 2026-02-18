@@ -1,5 +1,6 @@
 package raisetech.student.management.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentsCourses;
 import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.repository.StudentRepository;
 import raisetech.student.management.service.StudentsService;
 
 @Controller
@@ -31,8 +33,8 @@ public class StudentController {
   public String  getStudentList(Model model) {
     List<Student> students = service.searchStudentList();
     List<StudentsCourses> studentsCourses = service.searchStudentsCoursesList();
-
     model.addAttribute("studentList", converter.convertStudentDetails(students, studentsCourses));
+
     return "studentList";
 
   }
@@ -42,6 +44,10 @@ public class StudentController {
   public String newStudent(Model model) {
     StudentDetail sd = new StudentDetail();
     sd.setStudent(new Student());
+
+    sd.setStudentsCourses(new ArrayList<>());
+    sd.getStudentsCourses().add(new StudentsCourses()); // ★0番を用意
+
     model.addAttribute("studentDetail", sd);
     return "registerStudent";
   }
@@ -55,5 +61,8 @@ public class StudentController {
     service.registerStudent(studentDetail);
     return "redirect:/studentList";
   }
+
+
+
 
 }
