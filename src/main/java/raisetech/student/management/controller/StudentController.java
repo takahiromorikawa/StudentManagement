@@ -13,7 +13,6 @@ import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentsCourses;
 import raisetech.student.management.domain.StudentDetail;
-import raisetech.student.management.repository.StudentRepository;
 import raisetech.student.management.service.StudentsService;
 
 @Controller

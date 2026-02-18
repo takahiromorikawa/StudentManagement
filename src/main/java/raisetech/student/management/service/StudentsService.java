@@ -59,8 +59,6 @@ public void registerStudent(StudentDetail studentDetail) {
 
   }
 
-  public List<Student> searchStudentsWithCourse() {
-    return studentRepository.findStudentsWithCourse();
 
 }
-}
+

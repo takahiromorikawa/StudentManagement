@@ -20,17 +20,4 @@ public interface StudentRepository {
   "VALUES (#{name}, #{age}, #{nameKana}, #{nickname}, #{mailaddress}, #{live}, #{sex},#{id})")
   void insertStudent(Student student);
 
-  @Select("""
-SELECT
-  s.ID,
-  s.name,
-  sc.course_name
-FROM students s
-LEFT JOIN students_courses sc
-  ON s.ID = sc.students_ID
-""")
-  List<Student> findStudentsWithCourse();
-
-
-
 }

@@ -17,5 +17,4 @@ public class Student {
   private String id;
   private String remark;
   private boolean isDeleted;
-  private String courseName;
 }
