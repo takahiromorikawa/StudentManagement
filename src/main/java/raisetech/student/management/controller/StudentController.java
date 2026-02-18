@@ -27,30 +27,23 @@ public class StudentController {
     this.converter = converter;
   }
 
-
   @GetMapping("/studentList")
   public String  getStudentList(Model model) {
     List<Student> students = service.searchStudentList();
     List<StudentsCourses> studentsCourses = service.searchStudentsCoursesList();
     model.addAttribute("studentList", converter.convertStudentDetails(students, studentsCourses));
-
     return "studentList";
-
   }
-
 
   @GetMapping("/newStudent")
   public String newStudent(Model model) {
     StudentDetail sd = new StudentDetail();
     sd.setStudent(new Student());
-
     sd.setStudentsCourses(new ArrayList<>());
     sd.getStudentsCourses().add(new StudentsCourses()); // ★0番を用意
-
     model.addAttribute("studentDetail", sd);
     return "registerStudent";
   }
-
 
   @PostMapping("/registerStudent")
   public String registerStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
@@ -60,8 +53,4 @@ public class StudentController {
     service.registerStudent(studentDetail);
     return "redirect:/studentList";
   }
-
-
-
-
 }

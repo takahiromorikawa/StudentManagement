@@ -32,7 +32,6 @@
     <td th:text="${studentDetail.student.sex}">男性</td>
     <td th:text="${studentDetail.student.remark}">特になし</td>
     <td th:text="${#lists.isEmpty(studentDetail.studentsCourses) ? '' : studentDetail.studentsCourses[0].courseName}"></td>
-
   </tr>
   </tbody>
 </table>
