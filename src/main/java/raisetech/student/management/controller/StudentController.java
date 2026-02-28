@@ -1,6 +1,6 @@
 package raisetech.student.management.controller;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.data.Student;
@@ -35,13 +36,18 @@ public class StudentController {
     return "studentList";
   }
 
+  @GetMapping("/student/{id}")
+  public String getStudent(@PathVariable Long id, Model model) {
+    StudentDetail studentDetail = service.searchStudent(id);
+    model.addAttribute("studentDetail", studentDetail);
+    return "updateStudent";
+  }
+
   @GetMapping("/newStudent")
   public String newStudent(Model model) {
-    StudentDetail sd = new StudentDetail();
-    sd.setStudent(new Student());
-    sd.setStudentsCourses(new ArrayList<>());
-    sd.getStudentsCourses().add(new StudentsCourses()); // ★0番を用意
-    model.addAttribute("studentDetail", sd);
+    StudentDetail studentDetail = new StudentDetail();
+    studentDetail.setStudentsCourses(Arrays.asList(new StudentsCourses()));
+    model.addAttribute("studentDetail", studentDetail);
     return "registerStudent";
   }
 
@@ -53,4 +59,15 @@ public class StudentController {
     service.registerStudent(studentDetail);
     return "redirect:/studentList";
   }
+
+  @PostMapping("/updateStudent")
+  public String updateStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
+    if(result.hasErrors()) {
+      return "updateStudent";
+    }
+    service.updateStudent(studentDetail);
+    return "redirect:/studentList";
+  }
 }
+
+

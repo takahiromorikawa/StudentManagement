@@ -14,7 +14,7 @@ public class Student {
   private String mailaddress;
   private String live;
   private String sex;
-  private String id;
+  private Long id;
   private String remark;
   private boolean isDeleted;
 }
