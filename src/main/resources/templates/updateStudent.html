@@ -46,6 +46,20 @@
     <label for="remark">備考:</label>
     <input type="text" id="remark" th:field="*{student.remark}" />
   </div>
+  <div>
+    <label for="isDeleted">キャンセル:</label>
+    <input type="checkbox" id="isDeleted" th:field="*{student.deleted}" />
+  </div>
+
+  <!-- 受講コースID -->
+  <div th:if="*{studentsCourses != null and !studentsCourses.isEmpty()}">
+    <label>受講生ID:　</label>
+    <input type="text" th:value="*{studentsCourses[0].studentsId}" readonly />
+  </div>
+
+  <div th:if="*{studentsCourses == null or studentsCourses.isEmpty()}">
+    <p>コース情報がありません</p>
+  </div>
 
   <!-- コース -->
   <div>

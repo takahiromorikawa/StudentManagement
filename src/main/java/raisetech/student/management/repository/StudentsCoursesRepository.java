@@ -18,7 +18,16 @@ import raisetech.student.management.data.StudentsCourses;
   @Select("select * FROM students_courses")
     List<StudentsCourses> searchStudentsCoursesList();
 
-  @Select("select * FROM students_courses WHERE students_ID = #{studentId}")
+  @Select("""
+  SELECT
+    id_bigint   AS idBigint,
+    students_ID AS studentsId,
+    course_name AS courseName,
+    start,
+    endplan
+  FROM students_courses
+  WHERE students_ID = #{studentId}
+""")
   List<StudentsCourses> searchStudentsCourses(Long studentId);
 
   @Insert("""
