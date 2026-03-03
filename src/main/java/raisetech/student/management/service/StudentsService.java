@@ -69,6 +69,5 @@ public class StudentsService {
     for (StudentsCourses sc : studentDetail.getStudentsCourses()) {
       studentsCoursesRepository.updateStudentsCourses(sc);
     }
-
   }
 }
