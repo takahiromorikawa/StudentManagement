@@ -12,3 +12,4 @@ public class StudentDetail {
   private Student student;
   private List<StudentsCourses> studentsCourses;
 }
+
