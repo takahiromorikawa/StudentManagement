@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import raisetech.student.management.controller.dto.UpdateStudentRequest;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentsCourses;
 import raisetech.student.management.domain.StudentDetail;
@@ -63,11 +64,15 @@ public class StudentsService {
   }
 
   @Transactional
-  public void updateStudent(StudentDetail studentDetail) {
-    Student student = studentDetail.getStudent();
-    studentRepository.updateStudent(student);
-    for (StudentsCourses sc : studentDetail.getStudentsCourses()) {
-      studentsCoursesRepository.updateStudentsCourses(sc);
+  public void updateStudent(UpdateStudentRequest request) {
+    Student student = studentRepository.searchStudent(request.getId().longValue());
+
+    if (student == null) {
+      throw new IllegalArgumentException("対象が存在しません");
     }
+
+    student.setName(request.getName());
+    studentRepository.updateStudent(student);
   }
+
 }

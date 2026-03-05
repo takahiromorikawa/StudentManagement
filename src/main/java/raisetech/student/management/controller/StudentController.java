@@ -1,5 +1,6 @@
 package raisetech.student.management.controller;
 
+import jakarta.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.controller.converter.StudentConverter;
+import raisetech.student.management.controller.dto.UpdateStudentRequest;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentsCourses;
 import raisetech.student.management.domain.StudentDetail;
@@ -62,9 +64,9 @@ public class StudentController {
   }
 
   @PostMapping("/updateStudent")
-  public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail) {
-    service.updateStudent(studentDetail);
-    return ResponseEntity.ok("更新処理が成功しました。");
+  public ResponseEntity<Void> updateStudent(@Valid @RequestBody UpdateStudentRequest request) {
+    service.updateStudent(request);
+    return ResponseEntity.noContent().build();
   }
 }
 
