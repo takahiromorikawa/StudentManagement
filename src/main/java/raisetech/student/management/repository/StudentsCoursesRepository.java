@@ -7,12 +7,20 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import raisetech.student.management.data.StudentsCourses;
 
+/**
+ * 受講生コース情報テーブルのRepositoryです。(受講生テーブルと受講生コース情報テーブルと紐付きます。)
+ */
 @Mapper
   public interface StudentsCoursesRepository {
 
   @Select("SELECT * FROM students_courses")
   List<StudentsCourses> search();
 
+  /**
+   * 受講生のコース情報の全件検索を行います。
+   *
+   * @return　受講生のコース情報(全件)
+   */
   @Select("select * FROM students_courses")
     List<StudentsCourses> searchStudentsCoursesList();
 
