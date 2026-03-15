@@ -15,4 +15,14 @@ public class UpdateStudentRequest {
   @NotBlank(message = "nameは必須です")
   private String name;
 
+  private Integer age;
+  private String nameKana;
+  private String nickname;
+  private String mailaddress;
+  private String live;
+  private String sex;
+  private String remark;
+  private Boolean isDeleted;
+
+
 }
