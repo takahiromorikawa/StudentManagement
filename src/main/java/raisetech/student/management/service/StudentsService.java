@@ -74,6 +74,9 @@ public class StudentsService {
     studentRepository.registerStudent(s);
     // ② ここで s.getId() に採番済みのIDが入っている
     Long generatedStudentId = s.getId();
+
+    //System.out.println("Generated ID = " + generatedStudentId);
+
     // ③ コースをINSERT（students_IDに採番IDを入れる）
     if (studentDetail.getStudentCourseList() != null) {
       for (StudentCourse sc : studentDetail.getStudentCourseList()) {
