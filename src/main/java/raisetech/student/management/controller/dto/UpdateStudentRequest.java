@@ -23,5 +23,4 @@ public class UpdateStudentRequest {
   private String remark;
   private Boolean isDeleted;
 
-
 }
