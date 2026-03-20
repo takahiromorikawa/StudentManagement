@@ -67,10 +67,10 @@ public class StudentsService {
   }
 
   /**
-   * 受講生詳細の登録を行います。 受講生と受講生コース情報を個別に登録し、受講生コース情報には受講生情報を紐づける値と、コース開始日、コース終了日を設定します。
+   * 受講生の登録を行います。 受講生と受講生コース情報を個別に登録し、受講生コース情報には受講生情報を紐づける値と、コース開始日、コース終了日を設定します。
    *
-   * @param studentDetail 受講生詳細
-   * @return　登録情報を付与した受講生詳細
+   * @param request 登録内容を含むリクエストオブジェクト
+   * @return　登録された受講生情報とコース情報をまとめた詳細オブジェクト
    */
   @Transactional
   public StudentDetail registerStudent(RegisterStudentRequest request) {

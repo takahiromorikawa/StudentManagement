@@ -6,6 +6,10 @@ spring.datasource.password=YOUR_PASSWORD
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 mybatis.configuration.map-underscore-to-camel-case=true
 
+#Swagger UI公開範囲設定
+#本番では SWAGGER_ENABLED=false にすること
+springdoc.api-docs.enabled=${SWAGGER_ENABLED:false}
+springdoc.swagger-ui.enabled=${SWAGGER_ENABLED:false}
 
 
 

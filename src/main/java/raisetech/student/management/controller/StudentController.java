@@ -1,5 +1,6 @@
 package raisetech.student.management.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +32,12 @@ public class StudentController {
   }
 
   /**
-   * 受講生詳細の一覧検索です。
+   * 受講生の一覧検索です。
    * 全件検索を行うので、条件指定は行いません。
    *
    * @return　受講生詳細一覧(全件)
    */
+  @Operation(summary = "一覧検索", description = "受講生の一覧を検索します。")
   @GetMapping("/studentList")
   public List<StudentDetail> getStudentList() {
     return service.searchStudentList();
@@ -48,17 +50,19 @@ public class StudentController {
    * @param id　受講生ID
    * @return　受講生詳細
    */
+  @Operation(summary ="詳細一覧検索", description = "受講生の詳細一覧検索します。")
   @GetMapping("/student/{id}")
   public StudentDetail getStudent(@PathVariable Long id) {
     return service.searchStudent(id);
   }
 
   /**
-   *受講生詳細の登録を行います。
+   *受講生の登録を行います。
    *
-   *@param studentDetail 受講生詳細
+   *@param request 登録する受講生の情報(入力バリデーション済み)
    *@return 実行結果
    */
+  @Operation(summary = "受講生登録", description = "受講生情報を登録します。")
   @PostMapping("/registerStudent")
   public ResponseEntity<StudentDetail> registerStudent(@Valid @RequestBody RegisterStudentRequest request) {
     StudentDetail responseStudentDetail = service.registerStudent(request);
@@ -66,11 +70,12 @@ public class StudentController {
   }
 
   /**
-   * 受講生詳細の更新を行います。
+   * 受講生情報の更新を行います。
    * キャンセルフラグの更新もここで行います(論理削除)
-   * @param request　受講生詳細
-   * @return　実行結果
+   * @param request　更新する受講生の情報(バリデーション済み)
+   * @return　実行結果(HTTP 204 No Content)
    */
+  @Operation(summary ="受講生更新", description ="受講生情報を更新します。")
   @PutMapping("/updateStudent")
   public ResponseEntity<Void> updateStudent(@Valid @RequestBody UpdateStudentRequest request) {
     service.updateStudent(request);
