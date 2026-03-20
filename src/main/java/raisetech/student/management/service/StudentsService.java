@@ -56,6 +56,11 @@ public class StudentsService {
    */
   public StudentDetail searchStudent(Long id) {
     Student student = studentRepository.searchStudent(id);
+
+    if (student == null) {
+      throw new IllegalArgumentException("該当する受講生が存在しません");
+    }
+
     List<StudentCourse> studentCourse = studentCourseListRepository.searchStudentCourse(
         student.getId());
     return new StudentDetail(student, studentCourse);
@@ -138,9 +143,8 @@ public class StudentsService {
       throw new IllegalArgumentException("対象が存在しません");
     }
 
-    if (request.getName() != null) {
       student.setName(request.getName());
-    }
+
     if (request.getAge() != null) {
       student.setAge(request.getAge());
     }
