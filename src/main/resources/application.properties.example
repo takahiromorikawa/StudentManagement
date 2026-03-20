@@ -8,8 +8,8 @@ mybatis.configuration.map-underscore-to-camel-case=true
 
 #Swagger UI公開範囲設定
 #本番では SWAGGER_ENABLED=false にすること
-springdoc.api-docs.enabled=${SWAGGER_ENABLED:true}
-springdoc.swagger-ui.enabled=${SWAGGER_ENABLED:true}
+springdoc.api-docs.enabled=${SWAGGER_ENABLED:false}
+springdoc.swagger-ui.enabled=${SWAGGER_ENABLED:false}
 
 
 
