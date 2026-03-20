@@ -1,11 +1,14 @@
 package raisetech.student.management.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import raisetech.student.management.controller.converter.StudentConverter;
+import raisetech.student.management.controller.dto.RegisterStudentRequest;
+import raisetech.student.management.controller.dto.StudentCourseRequest;
 import raisetech.student.management.controller.dto.UpdateStudentRequest;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
@@ -27,7 +30,7 @@ public class StudentsService {
 
   @Autowired
   public StudentsService(StudentRepository studentRepository,
-      StudentsCoursesRepository studentCourseListRepository,StudentConverter converter) {
+      StudentsCoursesRepository studentCourseListRepository, StudentConverter converter) {
     this.studentRepository = studentRepository;
     this.studentCourseListRepository = studentCourseListRepository;
 
@@ -35,8 +38,7 @@ public class StudentsService {
   }
 
   /**
-   * 受講生詳細の一覧検索です。
-   * 全件検索を行うので、条件指定は行いません。
+   * 受講生詳細の一覧検索です。 全件検索を行うので、条件指定は行いません。
    *
    * @return　受講生詳細一覧(全件)
    */
@@ -47,52 +49,69 @@ public class StudentsService {
   }
 
   /**
-   * 受講生詳細検索です。
-   * IDに紐づく受講生情報を取得した後、その受講生に紐づく受講生コース情報を取得して設定します。
+   * 受講生詳細検索です。 IDに紐づく受講生情報を取得した後、その受講生に紐づく受講生コース情報を取得して設定します。
    *
-   * @param id　受講生ID
+   * @param id 受講生ID
    * @return　受講生詳細
    */
   public StudentDetail searchStudent(Long id) {
     Student student = studentRepository.searchStudent(id);
-    List<StudentCourse> studentCourse = studentCourseListRepository.searchStudentCourse(student.getId());
+    List<StudentCourse> studentCourse = studentCourseListRepository.searchStudentCourse(
+        student.getId());
     return new StudentDetail(student, studentCourse);
   }
 
   /**
-   * 受講生詳細の登録を行います。
-   * 受講生と受講生コース情報を個別に登録し、受講生コース情報には受講生情報を紐づける値と、コース開始日、コース終了日を設定します。
+   * 受講生詳細の登録を行います。 受講生と受講生コース情報を個別に登録し、受講生コース情報には受講生情報を紐づける値と、コース開始日、コース終了日を設定します。
    *
-   * @param studentDetail　受講生詳細
+   * @param studentDetail 受講生詳細
    * @return　登録情報を付与した受講生詳細
    */
   @Transactional
-  public StudentDetail registerStudent(StudentDetail studentDetail) {
-    Student s = studentDetail.getStudent();
+  public StudentDetail registerStudent(RegisterStudentRequest request) {
+    // ① StudentをDTOから作る
+    Student s = new Student();
+    s.setName(request.getName());
+    s.setAge(request.getAge());
+    s.setNameKana(request.getNameKana());
+    s.setNickname(request.getNickname());
+    s.setMailaddress(request.getMailaddress());
+    s.setLive(request.getLive());
+    s.setSex(request.getSex());
+    s.setRemark(request.getRemark());
+    s.setDeleted(false);
 
-    // ① students をINSERT（ここでDBがIDを採番）
+    // ② students をINSERT（ここでID採番）
     studentRepository.registerStudent(s);
-    // ② ここで s.getId() に採番済みのIDが入っている
     Long generatedStudentId = s.getId();
 
-    //System.out.println("Generated ID = " + generatedStudentId);
+    // ③ コースをINSERT
+    List<StudentCourse> courseList = new ArrayList<>();
 
-    // ③ コースをINSERT（students_IDに採番IDを入れる）
-    if (studentDetail.getStudentCourseList() != null) {
-      for (StudentCourse sc : studentDetail.getStudentCourseList()) {
+    if (request.getStudentCourseList() != null) {
+      for (StudentCourseRequest courseRequest : request.getStudentCourseList()) {
+
+        StudentCourse sc = new StudentCourse();
+        sc.setStudentsId(generatedStudentId);
+        sc.setCourseName(courseRequest.getCourseName());
+
         initStudentsCourse(sc, generatedStudentId);
+
         studentCourseListRepository.registerStudentCourse(sc);
+        courseList.add(sc);
       }
     }
 
-    return studentDetail;
+    // ④ StudentDetailにまとめて返す
+    return new StudentDetail(s, courseList);
   }
 
+
   /**
-   *受講生コース情報を登録する際の初期情報を設定する。
+   * 受講生コース情報を登録する際の初期情報を設定する。
    *
-   * @param sc　受講生コース情報
-   * @param generatedStudentId　受講生
+   * @param sc                 受講生コース情報
+   * @param generatedStudentId 受講生
    */
   private void initStudentsCourse(StudentCourse sc, Long generatedStudentId) {
     LocalDateTime now = LocalDateTime.now();
@@ -102,6 +121,8 @@ public class StudentsService {
     sc.setEndplan(now.plusYears(1));
   }
 
+
+
   /**
    * 受講生詳細の更新を行います。
    * 受講生と受講生コース情報をそれぞれ更新します。
@@ -109,21 +130,42 @@ public class StudentsService {
    */
   @Transactional
   public void updateStudent(UpdateStudentRequest request) {
+
     Student student = studentRepository.searchStudent(request.getId().longValue());
+
 
     if (student == null) {
       throw new IllegalArgumentException("対象が存在しません");
     }
 
-    student.setName(request.getName());
-    student.setAge(request.getAge());
-    student.setNameKana(request.getNameKana());
-    student.setNickname(request.getNickname());
-    student.setMailaddress(request.getMailaddress());
-    student.setLive(request.getLive());
-    student.setSex(request.getSex());
-    student.setRemark(request.getRemark());
-    student.setDeleted(request.getIsDeleted());
+    if (request.getName() != null) {
+      student.setName(request.getName());
+    }
+    if (request.getAge() != null) {
+      student.setAge(request.getAge());
+    }
+    if (request.getNameKana() != null) {
+      student.setNameKana(request.getNameKana());
+    }
+    if (request.getNickname() != null) {
+      student.setNickname(request.getNickname());
+    }
+    if (request.getMailaddress() != null) {
+      student.setMailaddress(request.getMailaddress());
+    }
+    if (request.getLive() != null) {
+      student.setLive(request.getLive());
+    }
+    if (request.getSex() != null) {
+      student.setSex(request.getSex());
+    }
+    if (request.getRemark() != null) {
+      student.setRemark(request.getRemark());
+    }
+    if (request.getIsDeleted() != null) {
+      student.setDeleted(request.getIsDeleted());
+    }
+
     studentRepository.updateStudent(student);
   }
 
