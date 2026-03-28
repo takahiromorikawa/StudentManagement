@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.controller.dto.RegisterStudentRequest;
 import raisetech.student.management.controller.dto.UpdateStudentRequest;
 import raisetech.student.management.domain.StudentDetail;
-import raisetech.student.management.service.StudentsService;
+import raisetech.student.management.service.StudentService;
 
 /**
  * 受講生の検索や登録、更新などを行うREST APIとして受け付けるControllerです。
@@ -24,10 +24,10 @@ import raisetech.student.management.service.StudentsService;
 @RestController
 public class StudentController {
 
-  private StudentsService service;
+  private StudentService service;
 
   @Autowired
-  public StudentController(StudentsService service) {
+  public StudentController(StudentService service) {
     this.service = service;
   }
 
