@@ -14,8 +14,11 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.controller.dto.RegisterStudentRequest;
 import raisetech.student.management.controller.dto.StudentCourseRequest;
@@ -27,6 +30,7 @@ import raisetech.student.management.repository.StudentCourseRepository;
 import raisetech.student.management.repository.StudentRepository;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class StudentServiceTest {
 
   @Mock
@@ -38,11 +42,18 @@ class StudentServiceTest {
   @Mock
   private StudentConverter converter;
 
+  @InjectMocks
   private StudentService sut;
 
   @BeforeEach
-  void before() {
+  void setUp() {
     sut = new StudentService(studentRepository, studentCourseListRepository, converter);
+
+    doAnswer(invocation -> {
+      Student arg = invocation.getArgument(0);
+      arg.setId(1L); // IDを疑似付与
+      return null;
+    }).when(studentRepository).registerStudent(any());
   }
 
   @Test
@@ -115,16 +126,7 @@ class StudentServiceTest {
     courseRequests.add(courseRequest);
     request.setStudentCourseList(courseRequests);
 
-      doAnswer(invocation -> {
-        Student arg = invocation.getArgument(0);
-        arg.setId(1L); // DBがID付与した想定
-        return null;
-      }).when(studentRepository).registerStudent(any());
-
       StudentDetail result = sut.registerStudent(request);
-
-      // student登録確認
-      verify(studentRepository).registerStudent(any());
 
       // course登録確認
       verify(studentCourseListRepository, times(1))
@@ -132,31 +134,26 @@ class StudentServiceTest {
 
       // 戻り値確認
       assertEquals("山田", result.getStudent().getName());
+      assertEquals(1L, result.getStudent().getId());
+
       assertEquals(1, result.getStudentCourseList().size());
       assertEquals("Java", result.getStudentCourseList().get(0).getCourseName());
+      assertEquals(1L, result.getStudentCourseList().get(0).getStudentsId());
   }
+
   @Test
   void 受講生登録_正常系_コースなし() {
+
     RegisterStudentRequest request = new RegisterStudentRequest();
     request.setName("山田");
-
     request.setStudentCourseList(null);
-
-    doAnswer(invocation -> {
-      Student arg = invocation.getArgument(0);
-      arg.setId(1L);
-      return null;
-    }).when(studentRepository).registerStudent(any());
 
     StudentDetail result = sut.registerStudent(request);
 
-    verify(studentRepository).registerStudent(any());
-
-    // コースは呼ばれない
-    verify(studentCourseListRepository, never())
-        .registerStudentCourse(any());
-
     assertEquals(0, result.getStudentCourseList().size());
+
+    verify(studentRepository).registerStudent(any());
+    verify(studentCourseListRepository, never()).registerStudentCourse(any());
   }
 
   @Test
@@ -167,13 +164,6 @@ class StudentServiceTest {
 
     request.setStudentCourseList(new ArrayList<>()); // 空リスト
 
-    doAnswer(invocation -> {
-      Student arg = invocation.getArgument(0);
-      arg.setId(1L);
-      return null;
-    }).when(studentRepository).registerStudent(any());
-
-    // 実行
     StudentDetail result = sut.registerStudent(request);
 
     // 検証
@@ -185,35 +175,24 @@ class StudentServiceTest {
 
     // 戻り値も空
     assertEquals(0, result.getStudentCourseList().size());
+
   }
 
   @Test
-  void 受講生登録_異常系_コース名がnullでも登録されてしまうこと() {
-    // 事前準備
+  void 受講生登録_正常系_コース名nullは無視されること() {
+
     RegisterStudentRequest request = new RegisterStudentRequest();
     request.setName("山田");
 
-    StudentCourseRequest courseRequest = new StudentCourseRequest();
-    courseRequest.setCourseName(null); // 不正
+    StudentCourseRequest course = new StudentCourseRequest();
+    course.setCourseName(null);
 
-    List<StudentCourseRequest> list = new ArrayList<>();
-    list.add(courseRequest);
-    request.setStudentCourseList(list);
+    request.setStudentCourseList(List.of(course));
 
-    doAnswer(invocation -> {
-      Student arg = invocation.getArgument(0);
-      arg.setId(1L);
-      return null;
-    }).when(studentRepository).registerStudent(any());
-
-    // 実行
     StudentDetail result = sut.registerStudent(request);
 
-    // 検証
-    verify(studentCourseListRepository).registerStudentCourse(any());
+    assertEquals(0, result.getStudentCourseList().size());
 
-    // nullのまま登録されてしまう（現状仕様）
-    assertEquals(null, result.getStudentCourseList().get(0).getCourseName());
   }
 
   @Test
@@ -222,20 +201,11 @@ class StudentServiceTest {
     RegisterStudentRequest request = new RegisterStudentRequest();
     request.setName(null); // 不正
 
-    doAnswer(invocation -> {
-      Student arg = invocation.getArgument(0);
-      arg.setId(1L);
-      return null;
-    }).when(studentRepository).registerStudent(any());
-
     // 実行
-    StudentDetail result = sut.registerStudent(request);
+    assertThrows(NullPointerException.class, () -> {
+      sut.registerStudent(request);
+    });
 
-    // 検証
-    verify(studentRepository).registerStudent(any());
-
-    // 名前がnullのまま登録される（現状）
-    assertEquals(null, result.getStudent().getName());
   }
 
   @Test

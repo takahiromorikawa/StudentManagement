@@ -1,8 +1,8 @@
 package raisetech.student.management.domain;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,9 +13,23 @@ import raisetech.student.management.data.StudentCourse;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+
 public class StudentDetail {
+
   private Student student;
   private List<StudentCourse> studentCourseList;
+
+  public StudentDetail(Student student, List<StudentCourse> studentCourseList) {
+    this.student = student;
+    this.studentCourseList = studentCourseList;
+  }
+
+  public Student getStudent() {
+    return student;
+  }
+
+  public List<StudentCourse> getStudentCourseList() {
+    return studentCourseList == null ? new ArrayList<>() : studentCourseList;
+  }
 }
 
