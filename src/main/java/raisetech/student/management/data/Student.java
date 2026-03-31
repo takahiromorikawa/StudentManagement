@@ -10,7 +10,7 @@ import lombok.Setter;
 public class Student {
 
   private String name;
-  private int age;
+  private Integer age;
   private String nameKana;
   private String nickname;
   private String mailaddress;

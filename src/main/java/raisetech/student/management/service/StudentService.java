@@ -13,8 +13,8 @@ import raisetech.student.management.controller.dto.UpdateStudentRequest;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
-import raisetech.student.management.repository.StudentRepository;
 import raisetech.student.management.repository.StudentCourseRepository;
+import raisetech.student.management.repository.StudentRepository;
 
 /**
  * 受講生情報を取り扱うサービスです。
@@ -74,7 +74,12 @@ public class StudentService {
    */
   @Transactional
   public StudentDetail registerStudent(RegisterStudentRequest request) {
-    // ① StudentをDTOから作る
+
+    if (request.getName() == null) {
+      throw new NullPointerException("名前は必須です");
+    }
+
+    // ① Student作成
     Student s = new Student();
     s.setName(request.getName());
     s.setAge(request.getAge());
@@ -86,31 +91,32 @@ public class StudentService {
     s.setRemark(request.getRemark());
     s.setDeleted(false);
 
-    // ② students をINSERT（ここでID採番）
+    // ② DB登録（ここでIDが入る想定）
     studentRepository.registerStudent(s);
-    Long generatedStudentId = s.getId();
+    Long generatedStudentId = s.getId(); // ← これ使う
 
-    // ③ コースをINSERT
+    // ③ コース登録
     List<StudentCourse> courseList = new ArrayList<>();
 
     if (request.getStudentCourseList() != null) {
-      for (StudentCourseRequest courseRequest : request.getStudentCourseList()) {
+      for (StudentCourseRequest course : request.getStudentCourseList()) {
 
-        StudentCourse sc = new StudentCourse();
-        sc.setStudentsId(generatedStudentId);
-        sc.setCourseName(courseRequest.getCourseName());
+        if (course.getCourseName() == null) {
+          continue;
+        }
 
-        initStudentsCourse(sc, generatedStudentId);
+        StudentCourse studentCourse = new StudentCourse();
+        studentCourse.setCourseName(course.getCourseName());
 
-        studentCourseListRepository.registerStudentCourse(sc);
-        courseList.add(sc);
+        studentCourse.setStudentsId(generatedStudentId);
+
+        studentCourseListRepository.registerStudentCourse(studentCourse);
+        courseList.add(studentCourse);
       }
     }
 
-    // ④ StudentDetailにまとめて返す
     return new StudentDetail(s, courseList);
   }
-
 
   /**
    * 受講生コース情報を登録する際の初期情報を設定する。
@@ -126,8 +132,6 @@ public class StudentService {
     sc.setEndplan(now.plusYears(1));
   }
 
-
-
   /**
    * 受講生詳細の更新を行います。
    * 受講生と受講生コース情報をそれぞれ更新します。
@@ -138,9 +142,12 @@ public class StudentService {
 
     Student student = studentRepository.searchStudent(request.getId().longValue());
 
-
     if (student == null) {
       throw new IllegalArgumentException("対象が存在しません");
+    }
+
+    if (request.getName() == null) {
+      throw new NullPointerException("名前は必須です");
     }
 
       student.setName(request.getName());
