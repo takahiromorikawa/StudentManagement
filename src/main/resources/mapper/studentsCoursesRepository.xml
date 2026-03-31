@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="raisetech.student.management.repository.StudentsCoursesRepository">
+<mapper namespace="raisetech.student.management.repository.StudentCourseRepository">
 
 <!-- 受講生のコース情報の全件検索 -->
 <select id="searchStudentCourseList" resultType="raisetech.student.management.data.StudentCourse">
