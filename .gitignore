@@ -8,4 +8,6 @@ build/
 # Application config (secret)
 src/main/resources/application.properties
 
+application-local.yml
+
 
