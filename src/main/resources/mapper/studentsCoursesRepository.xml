@@ -3,16 +3,9 @@
 <mapper namespace="raisetech.student.management.repository.StudentCourseRepository">
 
 <!-- 受講生のコース情報の全件検索 -->
-  <select id="searchStudentCourseList" resultType="raisetech.student.management.data.StudentCourse">
-    SELECT
-    id_bigint   AS idBigint,
-    students_id AS studentsId,
-    course_name AS courseName,
-    start,
-    endplan
-    FROM students_courses
-  </select>
-
+<select id="searchStudentCourseList" resultType="raisetech.student.management.data.StudentCourse">
+  SELECT * FROM students_courses
+</select>
 
 <!-- 受講生IDをもとに受講生コース情報を検索 -->
 <select id="searchStudentCourse" resultType="raisetech.student.management.data.StudentCourse">
@@ -28,8 +21,8 @@
 
   <!-- 受講生のコース情報の新規登録-->
  <insert id="registerStudentCourse">
-   INSERT INTO students_courses (students_ID, course_name)
-   VALUES(#{studentsId}, #{courseName})
+   INSERT INTO students_courses (students_ID, course_name, start, endplan)
+   VALUES(#{studentsId}, #{courseName}, #{start}, #{endplan})
  </insert>
 
   <!-- 受講生のコース情報の更新-->
