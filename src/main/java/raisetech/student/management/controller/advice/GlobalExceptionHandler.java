@@ -45,4 +45,10 @@ public class GlobalExceptionHandler {
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
   }
+
+  @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
+  public ResponseEntity<String> handleTypeMismatch(Exception e) {
+    return ResponseEntity.badRequest().body("不正なパラメータです");
+  }
+
 }
