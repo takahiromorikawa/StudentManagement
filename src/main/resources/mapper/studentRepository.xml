@@ -9,7 +9,7 @@
 
   <!-- 受講生の検索 -->
   <select id="searchStudent" resultType="raisetech.student.management.data.Student">
-    SELECT * FROM students WHERE id = #{id}
+    SELECT * FROM students WHERE ID = #{id}
   </select>
 
   <!-- 受講生の新規登録-->
@@ -22,7 +22,7 @@
   <!-- 受講生の更新-->
   <update id="updateStudent">
     UPDATE students SET name = #{name}, age = #{age}, name_kana = #{nameKana}, nickname = #{nickname},
-    mailaddress = #{mailaddress}, live = #{live}, sex = #{sex}, remark = #{remark}, is_deleted = #{isDeleted} WHERE id = #{id}
+    mailaddress = #{mailaddress}, live = #{live}, sex = #{sex}, remark = #{remark}, is_deleted = #{isDeleted} WHERE ID = #{id}
   </update>
 
 </mapper>

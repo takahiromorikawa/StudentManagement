@@ -1,14 +1,17 @@
 package raisetech.student.management.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import raisetech.student.management.data.Student;
 
 @MybatisTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class StudentRepositoryTest {
 
   @Autowired
@@ -67,6 +70,26 @@ class StudentRepositoryTest {
 
     assertThat(actual.get(0).getNickname()).isEqualTo(newNickname);
     assertThat(actual.get(0).getLive()).isEqualTo("東京都");
+  }
+
+  //異常系テスト
+  @Test
+  void 存在しない受講生IDで検索した際にnullが返ること() {
+    // data.sqlに存在しないID（例: 999）で検索
+    Student actual = sut.searchStudent(999L);
+
+    assertThat(actual).isNull();
+  }
+
+  @Test
+  void 名前がnullの状態で受講生を登録しようとすると例外が発生すること() {
+    Student student = new Student();
+    student.setName(null);
+
+    // MyBatis/H2の制約違反（NOT NULL制約）で例外が発生することを検証
+    assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> {
+      sut.registerStudent(student);
+    });
   }
 
 }
