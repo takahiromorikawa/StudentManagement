@@ -133,9 +133,9 @@ public class StudentService {
   }
 
   /**
-   * 受講生詳細の更新を行います。
-   * 受講生と受講生コース情報をそれぞれ更新します。
-   * @param request　受講生詳細
+   * 受講生詳細の更新を行います。 受講生と受講生コース情報をそれぞれ更新します。
+   *
+   * @param request 受講生詳細
    */
   @Transactional
   public void updateStudent(UpdateStudentRequest request) {
@@ -150,7 +150,7 @@ public class StudentService {
       throw new NullPointerException("名前は必須です");
     }
 
-      student.setName(request.getName());
+    student.setName(request.getName());
 
     if (request.getAge() != null) {
       student.setAge(request.getAge());
@@ -178,6 +178,19 @@ public class StudentService {
     }
 
     studentRepository.updateStudent(student);
+
+    if (request.getStudentCourseList() != null) {
+      for (StudentCourseRequest courseRequest : request.getStudentCourseList()) {
+        StudentCourse studentCourse = new StudentCourse();
+
+        // DTO(Request)からEntity(StudentCourse)へ値を移し替える
+        studentCourse.setIdBigint(courseRequest.getId().longValue());
+        studentCourse.setCourseName(courseRequest.getCourseName());
+
+        // ここでRepositoryのメソッドを呼び出す！
+        studentCourseListRepository.updateStudentCourse(studentCourse);
+      }
+    }
   }
 
 }

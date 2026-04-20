@@ -3,6 +3,7 @@ package raisetech.student.management.controller.dto;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,5 +23,7 @@ public class UpdateStudentRequest {
   private String sex;
   private String remark;
   private Boolean isDeleted;
+
+  private List<StudentCourseRequest> studentCourseList;
 
 }
