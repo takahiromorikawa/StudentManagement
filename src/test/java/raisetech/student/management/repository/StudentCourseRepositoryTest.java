@@ -1,6 +1,7 @@
 package raisetech.student.management.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -59,6 +60,26 @@ class StudentCourseRepositoryTest {
         List<StudentCourse> actual = sut.searchStudentCourseList();
         // 0番目のデータのコース名が変わっていることを確認
         assertThat(actual.get(0).getCourseName()).isEqualTo(updateName);
+    }
+
+    //異常系テスト
+    @Test
+    void 存在しない受講生IDでコース検索をした際に空のリストが返ること() {
+        List<StudentCourse> actual = sut.searchStudentCourse(999L);
+
+        assertThat(actual).isEmpty();
+    }
+
+    @Test
+    void 存在しない受講生IDを紐付けてコースを登録しようとすると例外が発生すること() {
+        StudentCourse course = new StudentCourse();
+        course.setStudentsId(999L); // 親テーブル(students)に存在しないID
+        course.setCourseName("Javaコース");
+
+        // 外部キー制約（Foreign Key Constraint）違反による例外を検証
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> {
+            sut.registerStudentCourse(course);
+        });
     }
 
 }
