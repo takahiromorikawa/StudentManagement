@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  // 🔹 バリデーションエラー
+  //バリデーションエラー
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<Map<String, String>> handleValidationException(
       MethodArgumentNotValidException ex) {
@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
   }
 
-  // 🔹 データが存在しない場合
+  //データが存在しない場合
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<Map<String, String>> handleIllegalArgument(
       IllegalArgumentException ex) {
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
   }
 
-  // 🔹 想定外エラー
+  //想定外エラー
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Map<String, String>> handleException(Exception ex) {
 

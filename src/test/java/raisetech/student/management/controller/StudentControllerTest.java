@@ -9,8 +9,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +26,6 @@ class StudentControllerTest {
 
   @MockitoBean
   private StudentService service;
-
-  private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
   @Test
   void 受講生詳細の一覧検索が実行できて空のリストが返ってくること() throws Exception {

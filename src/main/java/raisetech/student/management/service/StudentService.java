@@ -67,7 +67,7 @@ public class StudentService {
   }
 
   /**
-   * 受講生の登録を行います。 受講生と受講生コース情報を個別に登録し、受講生コース情報には受講生情報を紐づける値と、コース開始日、コース終了日を設定します。
+   * 受講生の登録を行います。受講生と受講生コース情報を個別に登録し、受講生コース情報には受講生情報を紐づける値と、コース開始日、コース終了日を設定します。
    *
    * @param request 登録内容を含むリクエストオブジェクト
    * @return　登録された受講生情報とコース情報をまとめた詳細オブジェクト
@@ -93,7 +93,7 @@ public class StudentService {
 
     // ② DB登録（ここでIDが入る想定）
     studentRepository.registerStudent(s);
-    Long generatedStudentId = s.getId(); // ← これ使う
+    Long generatedStudentId = s.getId();
 
     // ③ コース登録
     List<StudentCourse> courseList = new ArrayList<>();
@@ -108,7 +108,7 @@ public class StudentService {
         StudentCourse studentCourse = new StudentCourse();
         studentCourse.setCourseName(course.getCourseName());
 
-        studentCourse.setStudentsId(generatedStudentId);
+        initStudentsCourse(studentCourse, generatedStudentId);
 
         studentCourseListRepository.registerStudentCourse(studentCourse);
         courseList.add(studentCourse);
@@ -187,7 +187,7 @@ public class StudentService {
         studentCourse.setIdBigint(courseRequest.getId().longValue());
         studentCourse.setCourseName(courseRequest.getCourseName());
 
-        // ここでRepositoryのメソッドを呼び出す！
+        // ここでRepositoryのメソッドを呼び出す
         studentCourseListRepository.updateStudentCourse(studentCourse);
       }
     }
