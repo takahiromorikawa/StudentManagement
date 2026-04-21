@@ -4,3 +4,26 @@ spring:
     username: your_username
     password: your_password
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+//テスト
+spring:
+  datasource:
+    # ~/test（ファイル保存）から mem:testdb（メモリ保存）に変更
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
+
+  h2:
+    console:
+      enabled: true
+
+  sql:
+    init:
+      mode: always
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true

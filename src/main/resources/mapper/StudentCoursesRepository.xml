@@ -13,7 +13,6 @@
     FROM students_courses
   </select>
 
-
 <!-- 受講生IDをもとに受講生コース情報を検索 -->
 <select id="searchStudentCourse" resultType="raisetech.student.management.data.StudentCourse">
   SELECT
