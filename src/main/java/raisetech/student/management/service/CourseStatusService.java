@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import raisetech.student.management.data.CourseStatus;
+import raisetech.student.management.exception.ResourceNotFoundException;
 import raisetech.student.management.repository.CourseStatusMapper;
 
 /**
@@ -32,10 +33,15 @@ public class CourseStatusService {
    * 受講生コースステータスの検索です。 受講生コースIDをキーに、現在のステータス情報を取得します。
    *
    * @param studentCourseId 受講生コースID
-   * @return 見つかった受講生コースステータス（存在しない場合はnull）
+   * @return 見つかった受講生コースステータス
+   * @throws ResourceNotFoundException 指定されたIDのステータスが存在しない場合にスローされます
    */
   public CourseStatus findByStudentCourseId(Long studentCourseId) {
-    return courseStatusMapper.findByStudentCourseId(studentCourseId);
+    CourseStatus status = courseStatusMapper.findByStudentCourseId(studentCourseId);
+    if (status == null) {
+      throw new ResourceNotFoundException("受講生コースID:" + studentCourseId + " のステータスが見つかりません。");
+    }
+    return status;
   }
 
   /**
@@ -57,14 +63,10 @@ public class CourseStatusService {
    *
    * @param studentCourseId 受講生コースID
    * @param status          更新後のステータス文字列
-   * @throws IllegalArgumentException 指定されたIDのステータスが存在しない場合にスローされます
+   * @throws ResourceNotFoundException 指定されたIDのステータスが存在しない場合にスローされます
    */
   public void updateStatus(Long studentCourseId, String status) {
-    CourseStatus courseStatus = courseStatusMapper.findByStudentCourseId(studentCourseId);
-
-    if (courseStatus == null) {
-      throw new IllegalArgumentException("ステータスが存在しません");
-    }
+    CourseStatus courseStatus = findByStudentCourseId(studentCourseId);
 
     courseStatus.setCourseStatus(status);
 

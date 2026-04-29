@@ -42,18 +42,34 @@ class StudentServiceTest {
   @Mock
   private StudentConverter converter;
 
+  @Mock
+  private CourseStatusService courseStatusService;
+
   @InjectMocks
   private StudentService sut;
 
   @BeforeEach
   void setUp() {
-    sut = new StudentService(studentRepository, studentCourseListRepository, converter);
+    sut = new StudentService(
+        studentRepository,
+        studentCourseListRepository,
+        converter,
+        courseStatusService
+    );
 
+    // StudentのID疑似付与
     doAnswer(invocation -> {
       Student arg = invocation.getArgument(0);
-      arg.setId(1L); // IDを疑似付与
+      arg.setId(1L);
       return null;
     }).when(studentRepository).registerStudent(any());
+
+    // StudentCourseのID疑似付与
+    doAnswer(invocation -> {
+      StudentCourse arg = invocation.getArgument(0);
+      arg.setIdBigint(1L);
+      return null;
+    }).when(studentCourseListRepository).registerStudentCourse(any());
   }
 
   @Test
@@ -68,9 +84,9 @@ class StudentServiceTest {
     sut.searchStudentList();
 
     //検証
-    verify(studentRepository,times(1)).search();
-    verify(studentCourseListRepository,times(1)).searchStudentCourseList();
-    verify(converter,times(1)).convertStudentDetails(studentList,studentCourseList);
+    verify(studentRepository, times(1)).search();
+    verify(studentCourseListRepository, times(1)).searchStudentCourseList();
+    verify(converter, times(1)).convertStudentDetails(studentList, studentCourseList);
   }
 
   @Test
@@ -126,19 +142,19 @@ class StudentServiceTest {
     courseRequests.add(courseRequest);
     request.setStudentCourseList(courseRequests);
 
-      StudentDetail result = sut.registerStudent(request);
+    StudentDetail result = sut.registerStudent(request);
 
-      // course登録確認
-      verify(studentCourseListRepository, times(1))
-          .registerStudentCourse(any());
+    // course登録確認
+    verify(courseStatusService, times(1))
+        .register(any(), any());
 
-      // 戻り値確認
-      assertEquals("山田", result.getStudent().getName());
-      assertEquals(1L, result.getStudent().getId());
+    // 戻り値確認
+    assertEquals("山田", result.getStudent().getName());
+    assertEquals(1L, result.getStudent().getId());
 
-      assertEquals(1, result.getStudentCourseList().size());
-      assertEquals("Java", result.getStudentCourseList().get(0).getCourseName());
-      assertEquals(1L, result.getStudentCourseList().get(0).getStudentsId());
+    assertEquals(1, result.getStudentCourseList().size());
+    assertEquals("Java", result.getStudentCourseList().get(0).getCourseName());
+    assertEquals(1L, result.getStudentCourseList().get(0).getStudentsId());
   }
 
   @Test
@@ -154,6 +170,7 @@ class StudentServiceTest {
 
     verify(studentRepository).registerStudent(any());
     verify(studentCourseListRepository, never()).registerStudentCourse(any());
+    verify(courseStatusService, never()).register(any(), any());
   }
 
   @Test
@@ -176,6 +193,7 @@ class StudentServiceTest {
     // 戻り値も空
     assertEquals(0, result.getStudentCourseList().size());
 
+    verify(courseStatusService, never()).register(any(), any());
   }
 
   @Test
@@ -193,6 +211,7 @@ class StudentServiceTest {
 
     assertEquals(0, result.getStudentCourseList().size());
 
+    verify(courseStatusService, never()).register(any(), any());
   }
 
   @Test

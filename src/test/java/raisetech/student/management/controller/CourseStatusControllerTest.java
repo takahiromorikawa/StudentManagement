@@ -11,10 +11,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import raisetech.student.management.controller.dto.CourseStatusRequest;
 import raisetech.student.management.data.CourseStatus;
 import raisetech.student.management.service.CourseStatusService;
 
@@ -95,16 +97,32 @@ class CourseStatusControllerTest {
 
   @Test
   void ステータス更新ができること() throws Exception {
-    CourseStatus status = new CourseStatus();
-    status.setStudentCourseId(1L);
-    status.setCourseStatus("FORMAL");
+    CourseStatusRequest request = new CourseStatusRequest();
+    request.setStudentCourseId(1L);
+    request.setCourseStatus("FORMAL");
 
     mockMvc.perform(put("/course-status")
-            .contentType("application/json")
-            .content(objectMapper.writeValueAsString(status)))
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isOk());
 
     verify(service).updateStatus(1L, "FORMAL");
+  }
+
+  @Test
+  void 受講生コースIDが未入力の場合に400エラーが返ること() throws Exception {
+    String invalidJson = """
+        {
+            "studentCourseId": null,
+            "courseStatus": "受講中"
+        }
+        """;
+
+    mockMvc.perform(post("/course-status")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(invalidJson))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.studentCourseId").value("must not be null"));
   }
 
 }

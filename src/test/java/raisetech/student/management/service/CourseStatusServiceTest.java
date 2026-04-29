@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import raisetech.student.management.data.CourseStatus;
+import raisetech.student.management.exception.ResourceNotFoundException;
 import raisetech.student.management.repository.CourseStatusMapper;
 
 class CourseStatusServiceTest {
@@ -98,7 +99,7 @@ class CourseStatusServiceTest {
     when(mapper.findByStudentCourseId(1L)).thenReturn(null);
 
     // ===== 実行 & 検証 =====
-    assertThrows(IllegalArgumentException.class, () -> {
+    assertThrows(ResourceNotFoundException.class, () -> {
       sut.updateStatus(1L, "FORMAL");
     });
 

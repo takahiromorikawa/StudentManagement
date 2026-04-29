@@ -10,6 +10,7 @@ import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.controller.dto.RegisterStudentRequest;
 import raisetech.student.management.controller.dto.StudentCourseRequest;
 import raisetech.student.management.controller.dto.UpdateStudentRequest;
+import raisetech.student.management.data.CourseStatus;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
@@ -17,24 +18,25 @@ import raisetech.student.management.repository.StudentCourseRepository;
 import raisetech.student.management.repository.StudentRepository;
 
 /**
- * 受講生情報を取り扱うサービスです。
- * 受講生の検索や登録・更新処理を行います。
+ * 受講生情報を取り扱うサービスです。 受講生の検索や登録・更新処理を行います。
  */
 @Service
 public class StudentService {
 
   private final StudentRepository studentRepository;
   private final StudentCourseRepository studentCourseListRepository;
-
-  private StudentConverter converter;
+  private final StudentConverter converter;
+  private final CourseStatusService courseStatusService;
+  public static final String STATUS_TEMPORARY = "TEMPORARY";
 
   @Autowired
   public StudentService(StudentRepository studentRepository,
-      StudentCourseRepository studentCourseListRepository, StudentConverter converter) {
+      StudentCourseRepository studentCourseListRepository, StudentConverter converter,
+      CourseStatusService courseStatusService) {
     this.studentRepository = studentRepository;
     this.studentCourseListRepository = studentCourseListRepository;
-
     this.converter = converter;
+    this.courseStatusService = courseStatusService;
   }
 
   /**
@@ -45,6 +47,16 @@ public class StudentService {
   public List<StudentDetail> searchStudentList() {
     List<Student> studentList = studentRepository.search();
     List<StudentCourse> studentCourseList = studentCourseListRepository.searchStudentCourseList();
+
+    for (StudentCourse course : studentCourseList) {
+      CourseStatus status =
+          courseStatusService.findByStudentCourseId(course.getIdBigint());
+
+      if (status != null) {
+        course.setCourseStatus(status.getCourseStatus());
+      }
+    }
+
     return converter.convertStudentDetails(studentList, studentCourseList);
   }
 
@@ -63,6 +75,16 @@ public class StudentService {
 
     List<StudentCourse> studentCourse = studentCourseListRepository.searchStudentCourse(
         student.getId());
+
+    for (StudentCourse course : studentCourse) {
+      CourseStatus status =
+          courseStatusService.findByStudentCourseId(course.getIdBigint());
+
+      if (status != null) {
+        course.setCourseStatus(status.getCourseStatus());
+      }
+    }
+
     return new StudentDetail(student, studentCourse);
   }
 
@@ -98,7 +120,7 @@ public class StudentService {
     // ③ コース登録
     List<StudentCourse> courseList = new ArrayList<>();
 
-    if (request.getStudentCourseList() != null) {
+    if (request.getStudentCourseList() != null && !request.getStudentCourseList().isEmpty()) {
       for (StudentCourseRequest course : request.getStudentCourseList()) {
 
         if (course.getCourseName() == null) {
@@ -111,6 +133,9 @@ public class StudentService {
         initStudentsCourse(studentCourse, generatedStudentId);
 
         studentCourseListRepository.registerStudentCourse(studentCourse);
+
+        courseStatusService.register(studentCourse.getIdBigint(), STATUS_TEMPORARY);
+
         courseList.add(studentCourse);
       }
     }

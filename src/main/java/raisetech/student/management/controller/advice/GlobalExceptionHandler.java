@@ -59,4 +59,17 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
   }
 
+  /**
+   * DBの制約違反（重複登録など）が発生した場合のハンドリング。
+   */
+  @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+  public ResponseEntity<Map<String, String>> handleDataIntegrityViolation(
+      org.springframework.dao.DataIntegrityViolationException ex) {
+
+    Map<String, String> error = new HashMap<>();
+    error.put("error", "既に登録されているか、データの整合性に問題があります。");
+
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(error); //
+  }
+
 }
