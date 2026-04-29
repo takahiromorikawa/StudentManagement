@@ -24,6 +24,6 @@ CREATE TABLE IF NOT EXISTS students_courses (
 
 CREATE TABLE course_status (
                                id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                               student_course_id BIGINT,
-                               course_status VARCHAR(255)
+                               student_course_id BIGINT NOT NULL UNIQUE,
+                               course_status VARCHAR(255) NOT NULL
 );

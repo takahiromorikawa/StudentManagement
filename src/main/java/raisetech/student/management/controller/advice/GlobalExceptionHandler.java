@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import raisetech.student.management.exception.ResourceNotFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -49,6 +50,13 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
   public ResponseEntity<String> handleTypeMismatch(Exception e) {
     return ResponseEntity.badRequest().body("不正なパラメータです");
+  }
+
+  @ExceptionHandler(ResourceNotFoundException.class)
+  public ResponseEntity<Map<String, String>> handleResourceNotFound(ResourceNotFoundException ex) {
+    Map<String, String> error = new HashMap<>();
+    error.put("error", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
   }
 
 }

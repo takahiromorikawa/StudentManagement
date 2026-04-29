@@ -1,5 +1,6 @@
 package raisetech.student.management.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +49,7 @@ public class CourseStatusController {
    * @param request ステータス登録情報
    */
   @PostMapping
-  public void register(@RequestBody CourseStatusRequest request) {
+  public void register(@RequestBody @Valid CourseStatusRequest request) {
     service.register(
         request.getStudentCourseId(),
         request.getCourseStatus()
@@ -61,7 +62,7 @@ public class CourseStatusController {
    * @param request ステータス更新情報
    */
   @PutMapping
-  public void update(@RequestBody CourseStatusRequest request) {
+  public void update(@RequestBody @Valid CourseStatusRequest request) {
     service.updateStatus(
         request.getStudentCourseId(),
         request.getCourseStatus()
