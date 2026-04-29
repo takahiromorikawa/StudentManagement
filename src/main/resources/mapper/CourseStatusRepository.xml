@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="raisetech.student.management.repository.CourseStatusMapper">
+
+  <!-- 全件取得 -->
+  <select id="findAll" resultType="raisetech.student.management.data.CourseStatus">
+    SELECT
+    id,
+    student_course_id AS studentCourseId,
+    course_status AS courseStatus
+    FROM course_status
+  </select>
+
+  <!-- 個別取得 -->
+  <select id="findByStudentCourseId" resultType="raisetech.student.management.data.CourseStatus">
+    SELECT
+    id,
+    student_course_id AS studentCourseId,
+    course_status AS courseStatus
+    FROM course_status
+    WHERE student_course_id = #{studentCourseId}
+  </select>
+
+  <!-- 新規登録 -->
+  <insert id="insertCourseStatus"
+    parameterType="raisetech.student.management.data.CourseStatus"
+    useGeneratedKeys="true"
+    keyProperty="id">
+    INSERT INTO course_status (student_course_id, course_status)
+    VALUES (#{studentCourseId}, #{courseStatus})
+  </insert>
+
+  <!-- 更新 -->
+  <update id="updateCourseStatus">
+    UPDATE course_status
+    SET course_status = #{courseStatus}
+    WHERE student_course_id = #{studentCourseId}
+  </update>
+
+</mapper>
