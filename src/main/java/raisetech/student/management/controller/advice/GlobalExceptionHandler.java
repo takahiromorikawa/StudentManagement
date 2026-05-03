@@ -12,7 +12,7 @@ import raisetech.student.management.exception.ResourceNotFoundException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  //バリデーションエラー
+  //バリデーションエラー(400)
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<Map<String, String>> handleValidationException(
       MethodArgumentNotValidException ex) {
@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
   }
 
-  //データが存在しない場合
+  //入力値不正(400)
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<Map<String, String>> handleIllegalArgument(
       IllegalArgumentException ex) {
@@ -34,10 +34,10 @@ public class GlobalExceptionHandler {
     Map<String, String> error = new HashMap<>();
     error.put("error", ex.getMessage());
 
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
   }
 
-  //想定外エラー
+  //想定外エラー(500)
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Map<String, String>> handleException(Exception ex) {
 
@@ -47,11 +47,13 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
   }
 
+  //型不一致(400)
   @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
   public ResponseEntity<String> handleTypeMismatch(Exception e) {
     return ResponseEntity.badRequest().body("不正なパラメータです");
   }
 
+  //データ未存在(404)
   @ExceptionHandler(ResourceNotFoundException.class)
   public ResponseEntity<Map<String, String>> handleResourceNotFound(ResourceNotFoundException ex) {
     Map<String, String> error = new HashMap<>();
@@ -59,9 +61,7 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
   }
 
-  /**
-   * DBの制約違反（重複登録など）が発生した場合のハンドリング。
-   */
+  //DBの制約違反(409)
   @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
   public ResponseEntity<Map<String, String>> handleDataIntegrityViolation(
       org.springframework.dao.DataIntegrityViolationException ex) {

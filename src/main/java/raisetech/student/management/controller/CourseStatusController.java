@@ -3,6 +3,8 @@ package raisetech.student.management.controller;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import raisetech.student.management.controller.dto.CourseStatusRequest;
 import raisetech.student.management.data.CourseStatus;
@@ -49,11 +51,12 @@ public class CourseStatusController {
    * @param request ステータス登録情報
    */
   @PostMapping
-  public void register(@RequestBody @Valid CourseStatusRequest request) {
+  public ResponseEntity<Void> register(@RequestBody @Valid CourseStatusRequest request) {
     service.register(
         request.getStudentCourseId(),
         request.getCourseStatus()
     );
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   /**
@@ -62,11 +65,12 @@ public class CourseStatusController {
    * @param request ステータス更新情報
    */
   @PutMapping
-  public void update(@RequestBody @Valid CourseStatusRequest request) {
+  public ResponseEntity<Void> update(@RequestBody @Valid CourseStatusRequest request) {
     service.updateStatus(
         request.getStudentCourseId(),
         request.getCourseStatus()
     );
+    return ResponseEntity.noContent().build();
   }
 
 }

@@ -1,5 +1,6 @@
 package raisetech.student.management.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -8,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.exception.ResourceNotFoundException;
 import raisetech.student.management.service.StudentService;
 
 @WebMvcTest(StudentController.class)
@@ -47,7 +50,7 @@ class StudentControllerTest {
   @Test
   void 受講生登録ができること() throws Exception {
 
-    when(service.registerStudent(org.mockito.ArgumentMatchers.any()))
+    when(service.registerStudent(any()))
         .thenReturn(new StudentDetail());
 
     mockMvc.perform(post("/registerStudent")
@@ -63,7 +66,9 @@ class StudentControllerTest {
           "sex": "男性"
         }
       """))
-        .andExpect(status().isOk());
+        .andExpect(status().isCreated());
+
+    verify(service, times(1)).registerStudent(any());
   }
 
   @Test
@@ -80,11 +85,42 @@ class StudentControllerTest {
   }
 
   @Test
+  void 存在しない受講生の場合は404が返ること() throws Exception {
+    when(service.searchStudent(1L))
+        .thenThrow(new ResourceNotFoundException("見つかりません"));
+
+    mockMvc.perform(get("/student/1"))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.error").value("見つかりません"));
+  }
+
+  @Test
+  void 不正なリクエストの場合は400が返ること() throws Exception {
+    when(service.searchStudent(1L))
+        .thenThrow(new IllegalArgumentException("不正"));
+
+    mockMvc.perform(get("/student/1"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.error").value("不正"));
+  }
+
+  @Test
+  void 想定外エラーの場合は500が返ること() throws Exception {
+    when(service.searchStudent(1L))
+        .thenThrow(new RuntimeException());
+
+    mockMvc.perform(get("/student/1"))
+        .andExpect(status().isInternalServerError())
+        .andExpect(jsonPath("$.error")
+            .value("サーバーエラーが発生しました"));
+  }
+
+  @Test
   void 受講生詳細の受講生でIDに数字以外を用いた時に400エラーになること() throws Exception {
 
     mockMvc.perform(get("/student/abc"))
         .andDo(print())
         .andExpect(status().isBadRequest());
-    }
+  }
 
 }

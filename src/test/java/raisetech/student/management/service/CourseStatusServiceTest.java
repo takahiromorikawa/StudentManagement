@@ -1,6 +1,5 @@
 package raisetech.student.management.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -10,6 +9,7 @@ import static org.mockito.Mockito.when;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -43,8 +43,37 @@ class CourseStatusServiceTest {
     List<CourseStatus> result = sut.findAll();
 
     // 検証
-    assertEquals(2, result.size());
+    assertThat(result).hasSize(2);
     verify(mapper).findAll();
+  }
+
+  @Test
+  void findOptionalByStudentCourseIdでステータスが存在しない場合Optionalがemptyになること() {
+
+    when(mapper.findByStudentCourseId(1L)).thenReturn(null);
+
+    Optional<CourseStatus> result = sut.findOptionalByStudentCourseId(1L);
+
+    assertThat(result).isEmpty();
+
+    verify(mapper).findByStudentCourseId(1L);
+  }
+
+  @Test
+  void findOptionalByStudentCourseIdでステータスが存在する場合値が返ること() {
+
+    CourseStatus mockStatus = new CourseStatus();
+    mockStatus.setStudentCourseId(1L);
+    mockStatus.setCourseStatus("TEMPORARY");
+
+    when(mapper.findByStudentCourseId(1L)).thenReturn(mockStatus);
+
+    Optional<CourseStatus> result = sut.findOptionalByStudentCourseId(1L);
+
+    assertThat(result).isPresent();
+    assertThat(result.get().getCourseStatus()).isEqualTo("TEMPORARY");
+
+    verify(mapper).findByStudentCourseId(1L);
   }
 
   @Test
@@ -60,7 +89,6 @@ class CourseStatusServiceTest {
     CourseStatus result = sut.findByStudentCourseId(1L);
 
     // 検証
-    assertThat(result).isNotNull();
     assertThat(result.getCourseStatus()).isEqualTo("TEMPORARY");
 
     verify(mapper).findByStudentCourseId(1L);
@@ -88,8 +116,7 @@ class CourseStatusServiceTest {
     sut.updateStatus(1L, "FORMAL");
 
     // ===== 検証 =====
-    assertEquals("FORMAL", existing.getCourseStatus());
-
+    assertThat(existing.getCourseStatus()).isEqualTo("FORMAL");
     verify(mapper, times(1)).updateCourseStatus(existing);
   }
 

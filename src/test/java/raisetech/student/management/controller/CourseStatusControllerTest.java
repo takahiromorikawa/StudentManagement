@@ -81,15 +81,15 @@ class CourseStatusControllerTest {
   @Test
   void ステータス登録ができること() throws Exception {
     // 準備
-    CourseStatus status = new CourseStatus();
-    status.setStudentCourseId(1L);
-    status.setCourseStatus("TEMPORARY");
+    CourseStatusRequest request = new CourseStatusRequest();
+    request.setStudentCourseId(1L);
+    request.setCourseStatus("TEMPORARY");
 
     // 実行
     mockMvc.perform(post("/course-status")
             .contentType("application/json")
-            .content(objectMapper.writeValueAsString(status)))
-        .andExpect(status().isOk());
+            .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isCreated());
 
     // 検証
     verify(service).register(1L, "TEMPORARY");
@@ -104,7 +104,7 @@ class CourseStatusControllerTest {
     mockMvc.perform(put("/course-status")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isOk());
+        .andExpect(status().isNoContent());
 
     verify(service).updateStatus(1L, "FORMAL");
   }

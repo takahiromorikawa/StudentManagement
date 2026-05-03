@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,9 +65,9 @@ public class StudentController {
    */
   @Operation(summary = "受講生登録", description = "受講生情報を登録します。")
   @PostMapping("/registerStudent")
-  public ResponseEntity<StudentDetail> registerStudent(@Valid @RequestBody RegisterStudentRequest request) {
-    StudentDetail responseStudentDetail = service.registerStudent(request);
-    return ResponseEntity.ok(responseStudentDetail);
+  public ResponseEntity<Void> registerStudent(@Valid @RequestBody RegisterStudentRequest request) {
+    service.registerStudent(request);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   /**

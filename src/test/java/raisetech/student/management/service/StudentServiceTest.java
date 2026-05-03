@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +24,7 @@ import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.controller.dto.RegisterStudentRequest;
 import raisetech.student.management.controller.dto.StudentCourseRequest;
 import raisetech.student.management.controller.dto.UpdateStudentRequest;
+import raisetech.student.management.data.CourseStatus;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
@@ -87,6 +89,7 @@ class StudentServiceTest {
     verify(studentRepository, times(1)).search();
     verify(studentCourseListRepository, times(1)).searchStudentCourseList();
     verify(converter, times(1)).convertStudentDetails(studentList, studentCourseList);
+    verify(courseStatusService, times(0)).findOptionalByStudentCourseId(any());
   }
 
   @Test
@@ -297,6 +300,30 @@ class StudentServiceTest {
 
     // updateは呼ばれない
     verify(studentRepository, never()).updateStudent(any());
+  }
+
+  @Test
+  void ステータスが設定されること() {
+    Student student = new Student();
+    student.setId(1L);
+
+    StudentCourse course = new StudentCourse();
+    course.setIdBigint(1L);
+
+    when(studentRepository.search()).thenReturn(List.of(student));
+    when(studentCourseListRepository.searchStudentCourseList())
+        .thenReturn(List.of(course));
+
+    CourseStatus status = new CourseStatus();
+    status.setCourseStatus("TEMPORARY");
+
+    when(courseStatusService.findOptionalByStudentCourseId(1L))
+        .thenReturn(Optional.of(status));
+
+    sut.searchStudentList();
+
+    assertEquals("TEMPORARY", course.getCourseStatus());
+    verify(courseStatusService).findOptionalByStudentCourseId(1L);
   }
 
 }

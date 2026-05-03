@@ -49,12 +49,11 @@ public class StudentService {
     List<StudentCourse> studentCourseList = studentCourseListRepository.searchStudentCourseList();
 
     for (StudentCourse course : studentCourseList) {
-      CourseStatus status =
-          courseStatusService.findByStudentCourseId(course.getIdBigint());
-
-      if (status != null) {
-        course.setCourseStatus(status.getCourseStatus());
-      }
+      courseStatusService
+          .findOptionalByStudentCourseId(course.getIdBigint())
+          .ifPresent(status ->
+              course.setCourseStatus(status.getCourseStatus())
+          );
     }
 
     return converter.convertStudentDetails(studentList, studentCourseList);

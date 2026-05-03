@@ -1,6 +1,7 @@
 package raisetech.student.management.service;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import raisetech.student.management.data.CourseStatus;
@@ -30,18 +31,34 @@ public class CourseStatusService {
   }
 
   /**
-   * 受講生コースステータスの検索です。 受講生コースIDをキーに、現在のステータス情報を取得します。
+   * 受講生コースステータスをDBから取得します。
    *
    * @param studentCourseId 受講生コースID
-   * @return 見つかった受講生コースステータス
-   * @throws ResourceNotFoundException 指定されたIDのステータスが存在しない場合にスローされます
+   * @return 受講生コースステータス（存在しない場合はnull）
+   */
+  private CourseStatus findInternal(Long studentCourseId) {
+    return courseStatusMapper.findByStudentCourseId(studentCourseId);
+  }
+  /**
+   * 受講生コースステータスの検索です。
+   * 存在しない場合は例外をスローします。
    */
   public CourseStatus findByStudentCourseId(Long studentCourseId) {
-    CourseStatus status = courseStatusMapper.findByStudentCourseId(studentCourseId);
+    CourseStatus status = findInternal(studentCourseId);
     if (status == null) {
-      throw new ResourceNotFoundException("受講生コースID:" + studentCourseId + " のステータスが見つかりません。");
+      throw new ResourceNotFoundException(
+          "受講生コースID:" + studentCourseId + " のステータスが見つかりません。"
+      );
     }
     return status;
+  }
+  /**
+   * 受講生コースステータスの検索です。
+   * 存在しない場合はOptional.empty()を返します。
+   * 一覧取得など、未登録を許容する場合に使用します。
+   */
+  public Optional<CourseStatus> findOptionalByStudentCourseId(Long studentCourseId) {
+    return Optional.ofNullable(findInternal(studentCourseId));
   }
 
   /**
