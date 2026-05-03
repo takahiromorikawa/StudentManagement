@@ -15,4 +15,5 @@ public class StudentCourse {
   private Long studentsId;
   private String courseName;
   private Long idBigint;
+
 }

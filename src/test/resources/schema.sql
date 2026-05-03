@@ -21,3 +21,9 @@ CREATE TABLE IF NOT EXISTS students_courses (
     PRIMARY KEY (id_bigint),
     FOREIGN KEY (students_ID) REFERENCES students(ID)
     );
+
+CREATE TABLE course_status (
+                               id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                               student_course_id BIGINT NOT NULL UNIQUE,
+                               course_status VARCHAR(255) NOT NULL
+);
