@@ -1,5 +1,6 @@
 package raisetech.student.management.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,7 +25,6 @@ import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.controller.dto.RegisterStudentRequest;
 import raisetech.student.management.controller.dto.StudentCourseRequest;
 import raisetech.student.management.controller.dto.UpdateStudentRequest;
-import raisetech.student.management.data.CourseStatus;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
@@ -76,16 +76,14 @@ class StudentServiceTest {
 
   @Test
   void 受講生詳細の一覧検索_リポジトリとコンバーターの処理が適切に呼び出せていること() {
-    //事前準備
+
     List<Student> studentList = new ArrayList<>();
     List<StudentCourse> studentCourseList = new ArrayList<>();
     when(studentRepository.search()).thenReturn(studentList);
     when(studentCourseListRepository.searchStudentCourseList()).thenReturn(studentCourseList);
 
-    //実行
     sut.searchStudentList();
 
-    //検証
     verify(studentRepository, times(1)).search();
     verify(studentCourseListRepository, times(1)).searchStudentCourseList();
     verify(converter, times(1)).convertStudentDetails(studentList, studentCourseList);
@@ -93,42 +91,39 @@ class StudentServiceTest {
   }
 
   @Test
-  void 受講生詳細検索_正常系_正しく取得できること() {
-    // 事前準備
-    Long id = 1L;
+  void 受講生詳細検索_正常系_コースステータスが未登録の場合でも例外が発生せず取得できること() {
+
+    Long studentId = 1L;
+    Long courseId = 100L;
+
     Student student = new Student();
-    student.setId(id);
+    student.setId(studentId);
 
-    List<StudentCourse> courseList = new ArrayList<>();
+    StudentCourse course = new StudentCourse();
+    course.setIdBigint(courseId);
+    List<StudentCourse> courseList = List.of(course);
 
-    when(studentRepository.searchStudent(id)).thenReturn(student);
-    when(studentCourseListRepository.searchStudentCourse(id)).thenReturn(courseList);
+    when(studentRepository.searchStudent(studentId)).thenReturn(student);
+    when(studentCourseListRepository.searchStudentCourse(studentId)).thenReturn(courseList);
 
-    // 実行
-    StudentDetail result = sut.searchStudent(id);
+    when(courseStatusService.findOptionalByStudentCourseId(courseId)).thenReturn(Optional.empty());
 
-    // 検証（呼び出し）
-    verify(studentRepository).searchStudent(id);
-    verify(studentCourseListRepository).searchStudentCourse(id);
+    StudentDetail result = sut.searchStudent(studentId);
 
-    // 検証（結果）
-    assertEquals(student, result.getStudent());
-    assertEquals(courseList, result.getStudentCourseList());
+    assertThat(result.getStudent()).isEqualTo(student);
+    assertThat(result.getStudentCourseList()).hasSize(1);
   }
 
   @Test
   void 受講生詳細検索_異常系_受講生が存在しない場合は例外() {
-    // 事前準備
     Long id = 1L;
     when(studentRepository.searchStudent(id)).thenReturn(null);
 
-    // 実行 & 検証
     IllegalArgumentException exception =
         assertThrows(IllegalArgumentException.class, () -> sut.searchStudent(id));
 
     assertEquals("該当する受講生が存在しません", exception.getMessage());
 
-    // 呼び出し確認
     verify(studentRepository).searchStudent(id);
     verify(studentCourseListRepository, never()).searchStudentCourse(any());
   }
@@ -147,11 +142,9 @@ class StudentServiceTest {
 
     StudentDetail result = sut.registerStudent(request);
 
-    // course登録確認
     verify(courseStatusService, times(1))
         .register(any(), any());
 
-    // 戻り値確認
     assertEquals("山田", result.getStudent().getName());
     assertEquals(1L, result.getStudent().getId());
 
@@ -178,7 +171,7 @@ class StudentServiceTest {
 
   @Test
   void 受講生登録_異常系_コースが空リストの場合() {
-    // 事前準備
+
     RegisterStudentRequest request = new RegisterStudentRequest();
     request.setName("山田");
 
@@ -186,14 +179,11 @@ class StudentServiceTest {
 
     StudentDetail result = sut.registerStudent(request);
 
-    // 検証
     verify(studentRepository).registerStudent(any());
 
-    // コースは登録されない
     verify(studentCourseListRepository, never())
         .registerStudentCourse(any());
 
-    // 戻り値も空
     assertEquals(0, result.getStudentCourseList().size());
 
     verify(courseStatusService, never()).register(any(), any());
@@ -219,11 +209,10 @@ class StudentServiceTest {
 
   @Test
   void 受講生登録_異常系_名前がnullの場合() {
-    // 事前準備
+
     RegisterStudentRequest request = new RegisterStudentRequest();
     request.setName(null); // 不正
 
-    // 実行
     assertThrows(NullPointerException.class, () -> {
       sut.registerStudent(request);
     });
@@ -300,30 +289,6 @@ class StudentServiceTest {
 
     // updateは呼ばれない
     verify(studentRepository, never()).updateStudent(any());
-  }
-
-  @Test
-  void ステータスが設定されること() {
-    Student student = new Student();
-    student.setId(1L);
-
-    StudentCourse course = new StudentCourse();
-    course.setIdBigint(1L);
-
-    when(studentRepository.search()).thenReturn(List.of(student));
-    when(studentCourseListRepository.searchStudentCourseList())
-        .thenReturn(List.of(course));
-
-    CourseStatus status = new CourseStatus();
-    status.setCourseStatus("TEMPORARY");
-
-    when(courseStatusService.findOptionalByStudentCourseId(1L))
-        .thenReturn(Optional.of(status));
-
-    sut.searchStudentList();
-
-    assertEquals("TEMPORARY", course.getCourseStatus());
-    verify(courseStatusService).findOptionalByStudentCourseId(1L);
   }
 
 }

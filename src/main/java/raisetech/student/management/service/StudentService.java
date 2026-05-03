@@ -10,7 +10,6 @@ import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.controller.dto.RegisterStudentRequest;
 import raisetech.student.management.controller.dto.StudentCourseRequest;
 import raisetech.student.management.controller.dto.UpdateStudentRequest;
-import raisetech.student.management.data.CourseStatus;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
@@ -48,14 +47,6 @@ public class StudentService {
     List<Student> studentList = studentRepository.search();
     List<StudentCourse> studentCourseList = studentCourseListRepository.searchStudentCourseList();
 
-    for (StudentCourse course : studentCourseList) {
-      courseStatusService
-          .findOptionalByStudentCourseId(course.getIdBigint())
-          .ifPresent(status ->
-              course.setCourseStatus(status.getCourseStatus())
-          );
-    }
-
     return converter.convertStudentDetails(studentList, studentCourseList);
   }
 
@@ -74,15 +65,6 @@ public class StudentService {
 
     List<StudentCourse> studentCourse = studentCourseListRepository.searchStudentCourse(
         student.getId());
-
-    for (StudentCourse course : studentCourse) {
-      CourseStatus status =
-          courseStatusService.findByStudentCourseId(course.getIdBigint());
-
-      if (status != null) {
-        course.setCourseStatus(status.getCourseStatus());
-      }
-    }
 
     return new StudentDetail(student, studentCourse);
   }

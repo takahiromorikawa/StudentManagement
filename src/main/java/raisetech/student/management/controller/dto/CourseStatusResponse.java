@@ -1,13 +1,11 @@
-package raisetech.student.management.data;
+package raisetech.student.management.controller.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class CourseStatus {
-
+public class CourseStatusResponse {
   private Long id;
   private Long studentCourseId;
   private String courseStatus;

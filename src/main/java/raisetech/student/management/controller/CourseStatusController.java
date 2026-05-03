@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.controller.dto.CourseStatusRequest;
+import raisetech.student.management.controller.dto.CourseStatusResponse;
 import raisetech.student.management.data.CourseStatus;
 import raisetech.student.management.service.CourseStatusService;
 
@@ -18,10 +20,12 @@ import raisetech.student.management.service.CourseStatusService;
 public class CourseStatusController {
 
   private final CourseStatusService service;
+  private final StudentConverter converter;
 
   @Autowired
-  public CourseStatusController(CourseStatusService service) {
+  public CourseStatusController(CourseStatusService service, StudentConverter converter) {
     this.service = service;
+    this.converter = converter;
   }
 
   /**
@@ -30,8 +34,9 @@ public class CourseStatusController {
    * @return 受講生コースステータスのリスト
    */
   @GetMapping
-  public List<CourseStatus> getAllStatuses() {
-    return service.findAll();
+  public List<CourseStatusResponse> getAllStatuses() {
+    List<CourseStatus> statuses = service.findAll();
+    return converter.convertCourseStatusResponseList(statuses);
   }
 
   /**
@@ -41,8 +46,9 @@ public class CourseStatusController {
    * @return 受講生コースステータス
    */
   @GetMapping("/{studentCourseId}")
-  public CourseStatus getStatus(@PathVariable Long studentCourseId) {
-    return service.findByStudentCourseId(studentCourseId);
+  public CourseStatusResponse getStatus(@PathVariable Long studentCourseId) {
+    CourseStatus status = service.findByStudentCourseId(studentCourseId);
+    return converter.convertCourseStatusResponse(status);
   }
 
   /**

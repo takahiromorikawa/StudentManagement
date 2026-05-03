@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
+import raisetech.student.management.controller.dto.CourseStatusResponse;
+import raisetech.student.management.data.CourseStatus;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
@@ -37,6 +39,32 @@ public class StudentConverter {
       studentDetails.add(studentDetail);
     });
     return studentDetails;
+  }
+
+  /**
+   * 受講生コースステータスをレスポンス用DTOに変換します。
+   *
+   * @param status 受講生コースステータス（Entity）
+   * @return 受講生コースステータス（DTO）
+   */
+  public CourseStatusResponse convertCourseStatusResponse(CourseStatus status) {
+    CourseStatusResponse response = new CourseStatusResponse();
+    response.setId(status.getId());
+    response.setStudentCourseId(status.getStudentCourseId());
+    response.setCourseStatus(status.getCourseStatus());
+    return response;
+  }
+
+  /**
+   * 受講生コースステータスのリストをレスポンス用DTOのリストに変換します。
+   *
+   * @param statuses 受講生コースステータスのリスト（Entity）
+   * @return 受講生コースステータスのリスト（DTO）
+   */
+  public List<CourseStatusResponse> convertCourseStatusResponseList(List<CourseStatus> statuses) {
+    return statuses.stream()
+        .map(this::convertCourseStatusResponse)
+        .collect(Collectors.toList());
   }
 
 }

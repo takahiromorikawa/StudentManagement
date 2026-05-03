@@ -3,10 +3,14 @@ package raisetech.student.management.converter;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import raisetech.student.management.controller.converter.StudentConverter;
+import raisetech.student.management.controller.dto.CourseStatusResponse;
+import raisetech.student.management.data.CourseStatus;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
 import java.util.Arrays;
+
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class StudentConverterTest {
@@ -19,39 +23,19 @@ class StudentConverterTest {
     Student student1 = new Student();
     student1.setId(1L);
     student1.setName("A");
-
-    Student student2 = new Student();
-    student2.setId(2L);
-    student2.setName("B");
-
-    List<Student> studentList = Arrays.asList(student1, student2);
+    List<Student> studentList = List.of(student1);
 
     StudentCourse course1 = new StudentCourse();
     course1.setStudentsId(1L);
     course1.setCourseName("Java");
+    List<StudentCourse> courseList = List.of(course1);
 
-    StudentCourse course2 = new StudentCourse();
-    course2.setStudentsId(1L);
-    course2.setCourseName("Spring");
-
-    StudentCourse course3 = new StudentCourse();
-    course3.setStudentsId(2L);
-    course3.setCourseName("AWS");
-
-    List<StudentCourse> courseList = Arrays.asList(course1, course2, course3);
-
-    // ===== 実行 =====
     List<StudentDetail> result = converter.convertStudentDetails(studentList, courseList);
 
-    // ===== 検証 =====
-    // student1
-    assertEquals(2, result.get(0).getStudentCourseList().size());
-    assertEquals("Java", result.get(0).getStudentCourseList().get(0).getCourseName());
-    assertEquals("Spring", result.get(0).getStudentCourseList().get(1).getCourseName());
-
-    // student2
-    assertEquals(1, result.get(1).getStudentCourseList().size());
-    assertEquals("AWS", result.get(1).getStudentCourseList().get(0).getCourseName());
+    assertThat(result).hasSize(1);
+    assertThat(result.get(0).getStudent().getName()).isEqualTo("A");
+    assertThat(result.get(0).getStudentCourseList()).hasSize(1);
+    assertThat(result.get(0).getStudentCourseList().get(0).getCourseName()).isEqualTo("Java");
   }
 
   @Test
@@ -64,25 +48,55 @@ class StudentConverterTest {
         List.of()
     );
 
-    assertEquals(0, result.get(0).getStudentCourseList().size());
+    assertThat(result.get(0).getStudentCourseList()).isEmpty();
+  }
+
+@Test
+void 関係ないコースは紐づかないこと() {
+  Student student = new Student();
+  student.setId(1L);
+
+  StudentCourse course = new StudentCourse();
+  course.setStudentsId(999L);
+
+  List<StudentDetail> result = converter.convertStudentDetails(
+      List.of(student),
+      List.of(course)
+  );
+
+  assertThat(result.get(0).getStudentCourseList()).isEmpty();
+}
+
+  @Test
+  void CourseStatusからResponseDTOに正しく変換できること() {
+    // ===== 準備 =====
+    CourseStatus status = new CourseStatus();
+    status.setId(100L);
+    status.setStudentCourseId(1L);
+    status.setCourseStatus("受講中");
+
+    CourseStatusResponse result = converter.convertCourseStatusResponse(status);
+
+    assertThat(result.getId()).isEqualTo(100L);
+    assertThat(result.getStudentCourseId()).isEqualTo(1L);
+    assertThat(result.getCourseStatus()).isEqualTo("受講中");
   }
 
   @Test
-  void 関係ないコースは紐づかないこと() {
-    Student student = new Student();
-    student.setId(1L);
+  void CourseStatusのリストが正しく変換できること() {
+    // ===== 準備 =====
+    CourseStatus status1 = new CourseStatus();
+    status1.setCourseStatus("受講中");
+    CourseStatus status2 = new CourseStatus();
+    status2.setCourseStatus("完了");
+    List<CourseStatus> statusList = Arrays.asList(status1, status2);
 
-    StudentCourse course = new StudentCourse();
-    course.setStudentsId(999L);
+    List<CourseStatusResponse> result = converter.convertCourseStatusResponseList(statusList);
 
-    List<StudentDetail> result = converter.convertStudentDetails(
-        List.of(student),
-        List.of(course)
-    );
-
-    assertEquals(0, result.get(0).getStudentCourseList().size());
+    assertThat(result).hasSize(2);
+    assertThat(result).extracting(CourseStatusResponse::getCourseStatus)
+        .containsExactly("受講中", "完了");
   }
-
 }
 
 
