@@ -37,7 +37,7 @@
     LEFT JOIN students_courses sc ON s.ID = sc.students_ID
     LEFT JOIN course_status cs ON sc.id_bigint = cs.student_course_id
     <where>
-      <!-- 通常は論理削除されていない(0)データのみを対象とする -->
+
       AND s.is_deleted = 0
 
       <if test="name != null and name != ''">

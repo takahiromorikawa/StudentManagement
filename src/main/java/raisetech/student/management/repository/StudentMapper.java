@@ -2,7 +2,7 @@ package raisetech.student.management.repository;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
-import raisetech.student.management.controller.dto.StudentSearchRequest;
+import raisetech.student.management.domain.StudentSearchCriteria;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.domain.StudentSearchDetail;
 
@@ -48,6 +48,6 @@ public interface StudentMapper {
    * @param request 検索条件
    * @return 検索結果一覧
    */
-  List<StudentSearchDetail> searchStudents(StudentSearchRequest request);
+  List<StudentSearchDetail> searchStudents(StudentSearchCriteria request);
 
 }

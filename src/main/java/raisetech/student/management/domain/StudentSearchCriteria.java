@@ -1,4 +1,4 @@
-package raisetech.student.management.controller.dto;
+package raisetech.student.management.domain;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +8,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class StudentSearchRequest {
+public class StudentSearchCriteria {
 
   private String name;
   private String nameKana;

@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.controller.dto.RegisterStudentRequest;
 import raisetech.student.management.controller.dto.StudentCourseRequest;
-import raisetech.student.management.controller.dto.StudentSearchRequest;
+import raisetech.student.management.domain.StudentSearchCriteria;
 import raisetech.student.management.controller.dto.UpdateStudentRequest;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
@@ -59,7 +59,7 @@ public class StudentService {
    * @param request 検索条件
    * @return 検索結果のリスト
    */
-  public List<StudentSearchDetail> searchStudents(StudentSearchRequest request) {
+  public List<StudentSearchDetail> searchStudents(StudentSearchCriteria request) {
     return studentMapper.searchStudents(request);
   }
 

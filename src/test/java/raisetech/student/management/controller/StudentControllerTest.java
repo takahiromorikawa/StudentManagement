@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import raisetech.student.management.controller.dto.StudentSearchRequest;
+import raisetech.student.management.domain.StudentSearchCriteria;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.exception.ResourceNotFoundException;
 import raisetech.student.management.service.StudentService;
@@ -128,7 +128,7 @@ class StudentControllerTest {
   @Test
   void getStudents_検索リクエストが正常に処理され200が返ること() throws Exception {
     // 準備：Serviceが空のリストを返すように設定
-    when(service.searchStudents(any(StudentSearchRequest.class)))
+    when(service.searchStudents(any(StudentSearchCriteria.class)))
         .thenReturn(Collections.emptyList());
 
     // 実行 & 検証

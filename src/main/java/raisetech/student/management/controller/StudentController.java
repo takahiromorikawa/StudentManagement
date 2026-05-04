@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.controller.dto.RegisterStudentRequest;
-import raisetech.student.management.controller.dto.StudentSearchRequest;
+import raisetech.student.management.domain.StudentSearchCriteria;
 import raisetech.student.management.controller.dto.UpdateStudentRequest;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.domain.StudentSearchDetail;
@@ -56,7 +56,7 @@ public class StudentController {
    */
   @Operation(summary = "受講生複合検索", description = "条件に合致する受講生情報を検索します。")
   @GetMapping("/students")
-  public List<StudentSearchDetail> getStudents(@ModelAttribute StudentSearchRequest request) {
+  public List<StudentSearchDetail> getStudents(@ModelAttribute StudentSearchCriteria request) {
     return service.searchStudents(request);
   }
 

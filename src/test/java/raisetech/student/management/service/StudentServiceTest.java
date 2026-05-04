@@ -24,7 +24,7 @@ import org.mockito.quality.Strictness;
 import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.controller.dto.RegisterStudentRequest;
 import raisetech.student.management.controller.dto.StudentCourseRequest;
-import raisetech.student.management.controller.dto.StudentSearchRequest;
+import raisetech.student.management.domain.StudentSearchCriteria;
 import raisetech.student.management.controller.dto.UpdateStudentRequest;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
@@ -296,7 +296,7 @@ class StudentServiceTest {
   @Test
   void searchStudents_検索処理が実行されるとMapperのメソッドが呼び出されること() {
     // 準備
-    StudentSearchRequest request = new StudentSearchRequest();
+    StudentSearchCriteria request = new StudentSearchCriteria();
     request.setName("テスト");
 
     List<StudentSearchDetail> expectedList = List.of(new StudentSearchDetail());
