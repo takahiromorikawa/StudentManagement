@@ -24,10 +24,12 @@ import org.mockito.quality.Strictness;
 import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.controller.dto.RegisterStudentRequest;
 import raisetech.student.management.controller.dto.StudentCourseRequest;
+import raisetech.student.management.controller.dto.StudentSearchRequest;
 import raisetech.student.management.controller.dto.UpdateStudentRequest;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.domain.StudentSearchDetail;
 import raisetech.student.management.repository.StudentCourseMapper;
 import raisetech.student.management.repository.StudentMapper;
 
@@ -289,6 +291,25 @@ class StudentServiceTest {
 
     // updateは呼ばれない
     verify(studentMapper, never()).updateStudent(any());
+  }
+
+  @Test
+  void searchStudents_検索処理が実行されるとMapperのメソッドが呼び出されること() {
+    // 準備
+    StudentSearchRequest request = new StudentSearchRequest();
+    request.setName("テスト");
+
+    List<StudentSearchDetail> expectedList = List.of(new StudentSearchDetail());
+    // Mapperが呼び出されたら、準備したリストを返すように設定（Mockの振る舞い）
+    when(studentMapper.searchStudents(request)).thenReturn(expectedList);
+
+    // 実行
+    List<StudentSearchDetail> actual = sut.searchStudents(request);
+
+    // 検証
+    assertThat(actual).isEqualTo(expectedList);
+    // MapperのsearchStudentsが、指定した引数で1回呼び出されたかを確認
+    verify(studentMapper, times(1)).searchStudents(request);
   }
 
 }

@@ -25,4 +25,45 @@
     mailaddress = #{mailaddress}, live = #{live}, sex = #{sex}, remark = #{remark}, is_deleted = #{isDeleted} WHERE ID = #{id}
   </update>
 
+  <select id="searchStudents" resultType="raisetech.student.management.domain.StudentSearchDetail">
+    SELECT
+    s.ID AS studentId,
+    s.name,
+    s.name_kana AS nameKana,
+    sc.id_bigint AS studentCourseId,
+    sc.course_name AS courseName,
+    cs.course_status AS courseStatus
+    FROM students s
+    LEFT JOIN students_courses sc ON s.ID = sc.students_ID
+    LEFT JOIN course_status cs ON sc.id_bigint = cs.student_course_id
+    <where>
+      <!-- 通常は論理削除されていない(0)データのみを対象とする -->
+      AND s.is_deleted = 0
+
+      <if test="name != null and name != ''">
+        AND s.name LIKE CONCAT('%', #{name}, '%')
+      </if>
+
+      <if test="nameKana != null and nameKana != ''">
+        AND s.name_kana LIKE CONCAT('%', #{nameKana}, '%')
+      </if>
+
+      <if test="id != null">
+        AND s.ID = #{id}
+      </if>
+
+      <if test="studentCourseId != null">
+        AND sc.id_bigint = #{studentCourseId}
+      </if>
+
+      <if test="courseName != null and courseName != ''">
+        AND sc.course_name = #{courseName}
+      </if>
+
+      <if test="courseStatus != null and courseStatus != ''">
+        AND cs.course_status = #{courseStatus}
+      </if>
+    </where>
+  </select>
+
 </mapper>
