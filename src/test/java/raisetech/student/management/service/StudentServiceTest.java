@@ -28,18 +28,18 @@ import raisetech.student.management.controller.dto.UpdateStudentRequest;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
-import raisetech.student.management.repository.StudentCourseRepository;
-import raisetech.student.management.repository.StudentRepository;
+import raisetech.student.management.repository.StudentCourseMapper;
+import raisetech.student.management.repository.StudentMapper;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class StudentServiceTest {
 
   @Mock
-  private StudentRepository studentRepository;
+  private StudentMapper studentMapper;
 
   @Mock
-  private StudentCourseRepository studentCourseListRepository;
+  private StudentCourseMapper studentCourseListRepository;
 
   @Mock
   private StudentConverter converter;
@@ -53,7 +53,7 @@ class StudentServiceTest {
   @BeforeEach
   void setUp() {
     sut = new StudentService(
-        studentRepository,
+        studentMapper,
         studentCourseListRepository,
         converter,
         courseStatusService
@@ -64,7 +64,7 @@ class StudentServiceTest {
       Student arg = invocation.getArgument(0);
       arg.setId(1L);
       return null;
-    }).when(studentRepository).registerStudent(any());
+    }).when(studentMapper).registerStudent(any());
 
     // StudentCourseのID疑似付与
     doAnswer(invocation -> {
@@ -79,12 +79,12 @@ class StudentServiceTest {
 
     List<Student> studentList = new ArrayList<>();
     List<StudentCourse> studentCourseList = new ArrayList<>();
-    when(studentRepository.search()).thenReturn(studentList);
+    when(studentMapper.search()).thenReturn(studentList);
     when(studentCourseListRepository.searchStudentCourseList()).thenReturn(studentCourseList);
 
     sut.searchStudentList();
 
-    verify(studentRepository, times(1)).search();
+    verify(studentMapper, times(1)).search();
     verify(studentCourseListRepository, times(1)).searchStudentCourseList();
     verify(converter, times(1)).convertStudentDetails(studentList, studentCourseList);
     verify(courseStatusService, times(0)).findOptionalByStudentCourseId(any());
@@ -103,7 +103,7 @@ class StudentServiceTest {
     course.setIdBigint(courseId);
     List<StudentCourse> courseList = List.of(course);
 
-    when(studentRepository.searchStudent(studentId)).thenReturn(student);
+    when(studentMapper.searchStudent(studentId)).thenReturn(student);
     when(studentCourseListRepository.searchStudentCourse(studentId)).thenReturn(courseList);
 
     when(courseStatusService.findOptionalByStudentCourseId(courseId)).thenReturn(Optional.empty());
@@ -117,14 +117,14 @@ class StudentServiceTest {
   @Test
   void 受講生詳細検索_異常系_受講生が存在しない場合は例外() {
     Long id = 1L;
-    when(studentRepository.searchStudent(id)).thenReturn(null);
+    when(studentMapper.searchStudent(id)).thenReturn(null);
 
     IllegalArgumentException exception =
         assertThrows(IllegalArgumentException.class, () -> sut.searchStudent(id));
 
     assertEquals("該当する受講生が存在しません", exception.getMessage());
 
-    verify(studentRepository).searchStudent(id);
+    verify(studentMapper).searchStudent(id);
     verify(studentCourseListRepository, never()).searchStudentCourse(any());
   }
 
@@ -164,7 +164,7 @@ class StudentServiceTest {
 
     assertEquals(0, result.getStudentCourseList().size());
 
-    verify(studentRepository).registerStudent(any());
+    verify(studentMapper).registerStudent(any());
     verify(studentCourseListRepository, never()).registerStudentCourse(any());
     verify(courseStatusService, never()).register(any(), any());
   }
@@ -179,7 +179,7 @@ class StudentServiceTest {
 
     StudentDetail result = sut.registerStudent(request);
 
-    verify(studentRepository).registerStudent(any());
+    verify(studentMapper).registerStudent(any());
 
     verify(studentCourseListRepository, never())
         .registerStudentCourse(any());
@@ -236,11 +236,11 @@ class StudentServiceTest {
     Student student = new Student();
     student.setId(1L);
 
-    when(studentRepository.searchStudent(1L)).thenReturn(student);
+    when(studentMapper.searchStudent(1L)).thenReturn(student);
 
     sut.updateStudent(request);
 
-    verify(studentRepository).updateStudent(student);
+    verify(studentMapper).updateStudent(student);
 
     assertEquals("山田", student.getName());
     assertEquals(20, student.getAge());
@@ -263,11 +263,11 @@ class StudentServiceTest {
     student.setId(1L);
     student.setAge(99); // 元の値
 
-    when(studentRepository.searchStudent(1L)).thenReturn(student);
+    when(studentMapper.searchStudent(1L)).thenReturn(student);
 
     sut.updateStudent(request);
 
-    verify(studentRepository).updateStudent(student);
+    verify(studentMapper).updateStudent(student);
 
     assertEquals("山田", student.getName());
 
@@ -280,7 +280,7 @@ class StudentServiceTest {
     UpdateStudentRequest request = new UpdateStudentRequest();
     request.setId(1);
 
-    when(studentRepository.searchStudent(1L)).thenReturn(null);
+    when(studentMapper.searchStudent(1L)).thenReturn(null);
 
     IllegalArgumentException exception =
         assertThrows(IllegalArgumentException.class, () -> sut.updateStudent(request));
@@ -288,7 +288,7 @@ class StudentServiceTest {
     assertEquals("対象が存在しません", exception.getMessage());
 
     // updateは呼ばれない
-    verify(studentRepository, never()).updateStudent(any());
+    verify(studentMapper, never()).updateStudent(any());
   }
 
 }

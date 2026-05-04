@@ -13,8 +13,8 @@ import raisetech.student.management.controller.dto.UpdateStudentRequest;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
-import raisetech.student.management.repository.StudentCourseRepository;
-import raisetech.student.management.repository.StudentRepository;
+import raisetech.student.management.repository.StudentCourseMapper;
+import raisetech.student.management.repository.StudentMapper;
 
 /**
  * 受講生情報を取り扱うサービスです。 受講生の検索や登録・更新処理を行います。
@@ -22,17 +22,17 @@ import raisetech.student.management.repository.StudentRepository;
 @Service
 public class StudentService {
 
-  private final StudentRepository studentRepository;
-  private final StudentCourseRepository studentCourseListRepository;
+  private final StudentMapper studentMapper;
+  private final StudentCourseMapper studentCourseListRepository;
   private final StudentConverter converter;
   private final CourseStatusService courseStatusService;
   public static final String STATUS_TEMPORARY = "TEMPORARY";
 
   @Autowired
-  public StudentService(StudentRepository studentRepository,
-      StudentCourseRepository studentCourseListRepository, StudentConverter converter,
+  public StudentService(StudentMapper studentMapper,
+      StudentCourseMapper studentCourseListRepository, StudentConverter converter,
       CourseStatusService courseStatusService) {
-    this.studentRepository = studentRepository;
+    this.studentMapper = studentMapper;
     this.studentCourseListRepository = studentCourseListRepository;
     this.converter = converter;
     this.courseStatusService = courseStatusService;
@@ -44,7 +44,7 @@ public class StudentService {
    * @return　受講生詳細一覧(全件)
    */
   public List<StudentDetail> searchStudentList() {
-    List<Student> studentList = studentRepository.search();
+    List<Student> studentList = studentMapper.search();
     List<StudentCourse> studentCourseList = studentCourseListRepository.searchStudentCourseList();
 
     return converter.convertStudentDetails(studentList, studentCourseList);
@@ -57,7 +57,7 @@ public class StudentService {
    * @return　受講生詳細
    */
   public StudentDetail searchStudent(Long id) {
-    Student student = studentRepository.searchStudent(id);
+    Student student = studentMapper.searchStudent(id);
 
     if (student == null) {
       throw new IllegalArgumentException("該当する受講生が存在しません");
@@ -95,7 +95,7 @@ public class StudentService {
     s.setDeleted(false);
 
     // ② DB登録（ここでIDが入る想定）
-    studentRepository.registerStudent(s);
+    studentMapper.registerStudent(s);
     Long generatedStudentId = s.getId();
 
     // ③ コース登録
@@ -146,7 +146,7 @@ public class StudentService {
   @Transactional
   public void updateStudent(UpdateStudentRequest request) {
 
-    Student student = studentRepository.searchStudent(request.getId().longValue());
+    Student student = studentMapper.searchStudent(request.getId().longValue());
 
     if (student == null) {
       throw new IllegalArgumentException("対象が存在しません");
@@ -183,7 +183,7 @@ public class StudentService {
       student.setDeleted(request.getIsDeleted());
     }
 
-    studentRepository.updateStudent(student);
+    studentMapper.updateStudent(student);
 
     if (request.getStudentCourseList() != null) {
       for (StudentCourseRequest courseRequest : request.getStudentCourseList()) {
