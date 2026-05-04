@@ -12,10 +12,10 @@ import raisetech.student.management.data.Student;
 
 @MybatisTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class StudentRepositoryTest {
+class StudentMapperTest {
 
   @Autowired
-  private StudentRepository sut;
+  private StudentMapper sut;
 
   @Test
   void 受講生の全件検索が行えること() {

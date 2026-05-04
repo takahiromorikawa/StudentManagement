@@ -8,7 +8,7 @@ import raisetech.student.management.data.StudentCourse;
  * 受講生コース情報テーブルのRepositoryです。(受講生テーブルと受講生コース情報テーブルと紐付きます。)
  */
 @Mapper
-  public interface StudentCourseRepository {
+  public interface StudentCourseMapper {
 
   /**
    * 受講生のコース情報の全件検索を行います。
