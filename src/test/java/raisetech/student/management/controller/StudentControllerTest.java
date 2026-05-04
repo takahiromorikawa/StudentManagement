@@ -11,12 +11,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import raisetech.student.management.domain.StudentSearchCriteria;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.exception.ResourceNotFoundException;
 import raisetech.student.management.service.StudentService;
@@ -121,6 +123,19 @@ class StudentControllerTest {
     mockMvc.perform(get("/student/abc"))
         .andDo(print())
         .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void getStudents_検索リクエストが正常に処理され200が返ること() throws Exception {
+    // 準備：Serviceが空のリストを返すように設定
+    when(service.searchStudents(any(StudentSearchCriteria.class)))
+        .thenReturn(Collections.emptyList());
+
+    // 実行 & 検証
+    mockMvc.perform(get("/students")
+            .param("name", "五条")  // クエリパラメータを擬似的に設定
+            .param("courseStatus", "受講中"))
+        .andExpect(status().isOk()); // 200 OKが返るか
   }
 
 }

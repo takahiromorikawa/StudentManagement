@@ -9,10 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.controller.dto.RegisterStudentRequest;
 import raisetech.student.management.controller.dto.StudentCourseRequest;
+import raisetech.student.management.domain.StudentSearchCriteria;
 import raisetech.student.management.controller.dto.UpdateStudentRequest;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.domain.StudentSearchDetail;
 import raisetech.student.management.repository.StudentCourseMapper;
 import raisetech.student.management.repository.StudentMapper;
 
@@ -48,6 +50,17 @@ public class StudentService {
     List<StudentCourse> studentCourseList = studentCourseListRepository.searchStudentCourseList();
 
     return converter.convertStudentDetails(studentList, studentCourseList);
+  }
+
+  /**
+   * 条件に基づいた受講生情報の検索です。
+   * 受講生情報、コース情報、申込状況を統合したリストを返却します。
+   *
+   * @param request 検索条件
+   * @return 検索結果のリスト
+   */
+  public List<StudentSearchDetail> searchStudents(StudentSearchCriteria request) {
+    return studentMapper.searchStudents(request);
   }
 
   /**

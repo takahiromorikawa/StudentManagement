@@ -8,14 +8,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.controller.dto.RegisterStudentRequest;
+import raisetech.student.management.domain.StudentSearchCriteria;
 import raisetech.student.management.controller.dto.UpdateStudentRequest;
 import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.domain.StudentSearchDetail;
 import raisetech.student.management.service.StudentService;
 
 /**
@@ -42,6 +45,19 @@ public class StudentController {
   @GetMapping("/studentList")
   public List<StudentDetail> getStudentList() {
     return service.searchStudentList();
+  }
+
+  /**
+   * 受講生の複合検索です。
+   * 条件に応じて受講生、コース、申込状況を統合した情報を返却します。
+   *
+   * @param request 検索条件
+   * @return 検索結果のリスト
+   */
+  @Operation(summary = "受講生複合検索", description = "条件に合致する受講生情報を検索します。")
+  @GetMapping("/students")
+  public List<StudentSearchDetail> getStudents(@ModelAttribute StudentSearchCriteria request) {
+    return service.searchStudents(request);
   }
 
   /**
