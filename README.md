@@ -35,29 +35,32 @@ JavaやSpring Bootの学習成果を形にするために作成しました。
 | <nobr>受講生詳細の一覧検索            | <nobr>受講生詳細の一覧検索です。全件検索を行うので、条件指定は行いません。                            |
 | <nobr>受講生詳細の個別検索(受講生ID指定)   | <nobr>受講生詳細検索の個別検索です。受講生IDを指定し、一意の受講生詳細を取得します。                      |
 | <nobr>受講生詳細の条件検索            | <nobr>名前・受講コース・申込状況などの検索条件を指定し、条件に該当する受講生詳細を取得します。                  |
-| <nobr>受講生詳細の登録              | 名前や居住地域などの受講生の情報と、受講コースをセットで登録します。                                  |
+| <nobr>受講生詳細の登録              | 名前や居住地域などの受講生の情報と、受講コース・申込状況をセットで登録します。                                  |
 | <nobr>受講生詳細の更新              | 受講生IDを指定し、任意の受講生詳細を更新します。<br>※削除処理については論理削除として実装しているため、更新処理として行います。 |
 | <nobr>申込状況での検索             | 申込状況を指定し、該当する受講生詳細を取得します。                                           |
 | <nobr>申込状況の更新            | IDを指定し、任意の申込状況を更新します。                                               |
 
 ## 使用イメージ
-#### 絞り込み検索
-<video src="video.mov/検索条件絞り込み.mov" controls width="100%"></video>
+### 絞り込み検索
+![検索条件絞り込み](images/検索条件絞り込み.gif)
 
-#### 新規登録
-<video src="video.mov/受講生新規登録.mov" controls width="100%"></video>
+### 新規登録
+![受講生新規登録](images/受講生新規登録.gif)
 
-#### 削除
-<video src="video.mov/更新処理(論理削除).mov" controls width="100%"></video>
+### 削除
+![更新処理(論理削除)](images/更新処理(論理削除).gif)
 
-#### 申込状況を更新
-<video src="video.mov/申込状況更新.mov" controls width="100%"></video>
+### 申込状況を更新
+![申込状況更新](images/申込状況更新.gif)
 
-### フォームバリデーション
+### フォームバリデーション(新規登録)
+<img src="images/新規登録validation.png" width="60%">
 
 ## 設計書
-### API仕様書
-[SwaggerによるAPI仕様書](http://localhost:8080/swagger-ui/index.html)
+### SwaggerによるAPI仕様書
+![swagger1](images/swagger1.png)
+![swagger2](images/swagger2.png)
+![swagger3](images/swagger3.png)
 
 ### ER図(Entity-Relationship Diagram)
 - 1人の受講生が複数コース持てます(1 : N)<br>
@@ -65,14 +68,14 @@ JavaやSpring Bootの学習成果を形にするために作成しました。
 ![](images/ER図.png)
 
 ### APIのURL設計
-| HTTP<br>メソッド | URL              | 処理内容       |
-|:-------------|:-----------------|:-----------|
-| GET          | /studentList     | 受講生詳細の一覧検索 |
-| GET          | /student/{id}    | 受講生詳細の個別検索(受講生ID指定)           |
-| POST         | /RegisterStudent | 受講生詳細の登録 |
-| PUT          | /UpdateStudent   | 受講生詳細の更新 |
-
-### 画面遷移図
+| HTTP<br>メソッド | URL              | 処理内容                        |
+|:-------------|:-----------------|:----------------------------|
+| GET          | /studentList     | 受講生詳細の一覧検索                  |
+| GET          | /student/{id}    | 受講生詳細の個別検索(受講生ID指定)  <br/>  |
+| GET          | /students        | 受講生詳細の条件検索                  |
+| POST         | /registerStudent | 受講生詳細の登録                    |
+| PUT          | /updateStudent   | 受講生詳細の更新                    |
+| PUT          | /update          | 申込状況の更新                             |
 
 ### シーケンス図
 #### 受講生詳細の個別検索(受講生ID指定)フロー
@@ -90,6 +93,9 @@ JavaやSpring Bootの学習成果を形にするために作成しました。
 JUnitを用いて単体テストを実装しました。
 
 ### テストを行ったクラス
+Controller / Service / Repository ごとにテストコードを作成しました。
+<br>
+<br>
 Controller
 - CourseStatusController
 - StudentController
@@ -106,9 +112,31 @@ Repository
 - StudentCourseMapper
 - StudentMapper
 
+正常系・異常系の両方を確認し、API が期待通り動作することを検証しています。
+
 ## 力を入れたところ
+### MVCアーキテクチャを意識した設計
+
+Spring Boot の MVC アーキテクチャを意識し、責務ごとにクラスを分割しました。
+
+- Controller  
+  リクエスト受付・レスポンス返却を担当
+- Service  
+  業務ロジックを担当
+- Repository(Mapper)  
+  データベースアクセスを担当
+- DTO  
+  リクエスト/レスポンス用オブジェクトを分離
+- Domain/Data  
+  アプリケーション内部で扱うデータを管理
+
+これにより、責務を分離し、保守しやすい構成を意識しました。
 
 ## 今後の課題
+一つ目は、クラウド環境へのデプロイを行うことです。<br>現在はローカル環境のみで動作していますが、今後はAWS（Amazon Web Services）を活用し、EC2インスタンスを構築して、本アプリケーションをオンライン上に公開する予定です。具体的には、VPCによる安全なネットワーク設計と、独自ドメインによるアクセスを目標としています。
+<br>
+<br>
+二つ目は、Reactによるモダンなフロントエンドの実装です。<br>ユーザー体験（UX）の向上を目指し、フロントエンドにReactを採用する予定です。これにより、ページ遷移のないスムーズな操作感（SPA）を実現し、より直感的で高速なインターフェースを提供したいです。
 
 
 
