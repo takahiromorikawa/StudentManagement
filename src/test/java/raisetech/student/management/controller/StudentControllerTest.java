@@ -58,16 +58,18 @@ class StudentControllerTest {
     mockMvc.perform(post("/registerStudent")
             .contentType("application/json")
             .content("""
-        {
-          "name": "テスト",
-          "age": 20,
-          "nameKana": "テスト",
-          "nickname": "テスト",
-          "mailaddress": "test@example.com",
-          "live": "奈良県",
-          "sex": "男性"
-        }
-      """))
+            {
+              "name": "テスト",
+              "age": 20,
+              "nameKana": "テスト",
+              "nickname": "テスト",
+              "mailaddress": "test@example.com",
+              "live": "奈良県",
+              "sex": "男性",
+              "courseStatus": "仮申込"
+            }
+            """))
+        .andDo(print())
         .andExpect(status().isCreated());
 
     verify(service, times(1)).registerStudent(any());

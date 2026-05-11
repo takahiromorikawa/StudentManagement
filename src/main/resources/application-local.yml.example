@@ -1,3 +1,8 @@
+# ===============================================================
+# データベース接続設定（どちらか一方を有効にする）
+# ===============================================================
+
+//パターンA:本物のデータベース（MySQL）に接続するための設定
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/StudentManagement
@@ -5,8 +10,7 @@ spring:
     password: your_password
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-
-//テスト
+//パターンB:アプリを実行している間だけ、自分のPCのメモリ（一時的な記憶場所）にデータベースを作る
 spring:
   datasource:
     # ~/test（ファイル保存）から mem:testdb（メモリ保存）に変更
@@ -15,14 +19,17 @@ spring:
     password: sa
     driver-class-name: org.h2.Driver
 
+#ブラウザからDBの中身が見れる「H2 Console」の設定（不要ならfalse）
   h2:
     console:
-      enabled: true
+      enabled: false
 
+# 起動時に毎回 schema.sql や data.sql を実行してDBを初期化する設定
   sql:
     init:
       mode: always
 
+#MyBatis(マイバティス)で、JavaとSQLを紐付けるライブラリの設定
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   configuration:

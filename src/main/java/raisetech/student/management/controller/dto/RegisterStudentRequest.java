@@ -15,27 +15,28 @@ public class RegisterStudentRequest {
 
   private Integer id;
 
-  @NotBlank(message = "nameは必須です")
+  @NotBlank(message = "氏名は必須です")
   private String name;
 
-  @Min(0)
-  @NotNull(message = "ageは必須です")
+  @Min(value = 0, message = "0 以上の値にしてください")
+  @NotNull
   private Integer age;
 
-  @NotBlank(message = "nameKanaは必須です")
+  @NotBlank(message = "カナ名は必須です")
   private String nameKana;
 
-  @NotBlank(message = "nicknameは必須です")
   private String nickname;
 
-  @Email
-  @NotBlank(message = "mailaddressは必須です")
+  @Email(message = "メールアドレス形式で入力してください")
+  @NotBlank(message = "メールアドレスは必須です")
   private String mailaddress;
 
-  @NotBlank(message = "liveは必須です")
+  @NotBlank(message = "居住地は必須です")
   private String live;
 
-  @NotBlank(message = "sexは必須です")
+  @NotBlank(message = "申込状況は必須です")
+  private String courseStatus;
+
   private String sex;
 
   private String remark;
