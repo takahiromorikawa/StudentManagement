@@ -1,5 +1,6 @@
 package raisetech.student.management.controller.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +15,7 @@ public class CourseStatusRequest {
   @NotNull
   private Long studentCourseId;
 
-  @NotNull
+  @NotBlank(message = "申込状況は必須です")
   private String courseStatus;
 
 }
