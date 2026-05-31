@@ -98,7 +98,7 @@ class CourseStatusControllerTest {
     request.setStudentCourseId(1L);
     request.setCourseStatus("FORMAL");
 
-    mockMvc.perform(put("/course-status")
+    mockMvc.perform(put("/course-status/1/status")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isNoContent());

@@ -37,7 +37,7 @@ class StudentControllerTest {
 
     when(service.searchStudentList()).thenReturn(List.of());
 
-    mockMvc.perform(get("/studentList"))
+    mockMvc.perform(get("/students"))
         .andExpect(status().isOk());
 
     verify (service, times(1)).searchStudentList();
@@ -45,7 +45,7 @@ class StudentControllerTest {
 
   @Test
   void 受講生詳細の取得ができること() throws Exception {
-    mockMvc.perform(get("/student/1"))
+    mockMvc.perform(get("/students/3"))
         .andExpect(status().isOk());
   }
 
@@ -55,7 +55,7 @@ class StudentControllerTest {
     when(service.registerStudent(any()))
         .thenReturn(new StudentDetail());
 
-    mockMvc.perform(post("/registerStudent")
+    mockMvc.perform(post("/students")
             .contentType("application/json")
             .content("""
             {
@@ -77,7 +77,7 @@ class StudentControllerTest {
 
   @Test
   void 受講生更新ができること() throws Exception {
-    mockMvc.perform(put("/updateStudent")
+    mockMvc.perform(put("/students")
             .contentType("application/json")
             .content("""
           {
@@ -93,7 +93,7 @@ class StudentControllerTest {
     when(service.searchStudent(1L))
         .thenThrow(new ResourceNotFoundException("見つかりません"));
 
-    mockMvc.perform(get("/student/1"))
+    mockMvc.perform(get("/students/1"))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.error").value("見つかりません"));
   }
@@ -103,7 +103,7 @@ class StudentControllerTest {
     when(service.searchStudent(1L))
         .thenThrow(new IllegalArgumentException("不正"));
 
-    mockMvc.perform(get("/student/1"))
+    mockMvc.perform(get("/students/1"))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.error").value("不正"));
   }
@@ -122,7 +122,7 @@ class StudentControllerTest {
   @Test
   void 受講生詳細の受講生でIDに数字以外を用いた時に400エラーになること() throws Exception {
 
-    mockMvc.perform(get("/student/abc"))
+    mockMvc.perform(get("/students/abc"))
         .andDo(print())
         .andExpect(status().isBadRequest());
   }
