@@ -44,17 +44,26 @@ JavaやSpring Bootの学習成果を形にするために作成しました。
 ### 絞り込み検索
 ![検索条件絞り込み](images/検索条件絞り込み.gif)
 
+[▶ MOV動画を見る](images/検索条件絞り込みの修正.mov)
+
 ### 新規登録
 ![受講生新規登録](images/受講生新規登録.gif)
+
+[▶ MOV動画を見る](images/新規登録修正.mov)
 
 ### 削除
 ![更新処理(論理削除)](images/更新処理(論理削除).gif)
 
+[▶ MOV動画を見る](images/削除修正.mov)
+
 ### 申込状況を更新
 ![申込状況更新](images/申込状況更新.gif)
 
+[▶ MOV動画を見る](images/申込み状況更新修正.mov)
+
+
 ### フォームバリデーション(新規登録)
-<img src="images/新規登録validation.png" width="60%">
+<img src="images/validation.new.png" width="60%">
 
 ## 設計書
 ### SwaggerによるAPI仕様書
@@ -79,15 +88,15 @@ JavaやSpring Bootの学習成果を形にするために作成しました。
 
 ### シーケンス図
 #### 受講生詳細の個別検索(受講生ID指定)フロー
-![](images/受講生ID検索.png)
+![](images/受講生詳細の個別検索(受講生ID指定)フロー修正.png)
 #### 受講生詳細の条件検索フロー
-![](images/受講生条件検索.png)
+![](images/受講生詳細の条件検索フロー修正.png)
 #### 受講生詳細の登録フロー
-![](images/受講生登録.png)
+![](images/受講生詳細の登録フロー修正.png)
 #### 受講生詳細の更新フロー
-![](images/受講生更新.png)
+![](images/受講生詳細の更新フロー修正.png)
 #### 申込状況の更新フロー
-![](images/申込状況更新.png)
+![](images/申込状況の更新フロー修正.png)
 
 ## テスト
 JUnitを用いて単体テストを実装しました。
