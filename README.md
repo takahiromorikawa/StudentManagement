@@ -58,9 +58,9 @@ JavaやSpring Bootの学習成果を形にするために作成しました。
 
 ## 設計書
 ### SwaggerによるAPI仕様書
-![swagger1](images/swagger1.png)
-![swagger2](images/swagger2.png)
-![swagger3](images/swagger3.png)
+![swagger修正1](images/swagger修正1.png)
+![swagger修正2](images/swagger修正2.png)
+![swagger修正3](images/swagger修正3.png)
 
 ### ER図(Entity-Relationship Diagram)
 - 1人の受講生が複数コース持てます(1 : N)<br>
@@ -68,14 +68,14 @@ JavaやSpring Bootの学習成果を形にするために作成しました。
 ![](images/ER図.png)
 
 ### APIのURL設計
-| HTTP<br>メソッド | URL              | 処理内容                        |
-|:-------------|:-----------------|:----------------------------|
-| GET          | /studentList     | 受講生詳細の一覧検索                  |
-| GET          | /student/{id}    | 受講生詳細の個別検索(受講生ID指定)  <br/>  |
-| GET          | /students        | 受講生詳細の条件検索                  |
-| POST         | /registerStudent | 受講生詳細の登録                    |
-| PUT          | /updateStudent   | 受講生詳細の更新                    |
-| PUT          | /update          | 申込状況の更新                             |
+| HTTP<br>メソッド | URL                                         | 処理内容                        |
+|:-------------|:--------------------------------------------|:----------------------------|
+| GET          | /students                                   | 受講生詳細の一覧検索                  |
+| GET          | /students/{id}                              | 受講生詳細の個別検索(受講生ID指定)  <br/>  |
+| GET          | /students/search                            | 受講生詳細の条件検索                  |
+| POST         | /students                                   | 受講生詳細の登録                    |
+| PUT          | /students                                   | 受講生詳細の更新                    |
+| PUT          | <nobr>/course-status/{id}/status            | 申込状況の更新                             |
 
 ### シーケンス図
 #### 受講生詳細の個別検索(受講生ID指定)フロー

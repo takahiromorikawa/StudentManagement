@@ -41,8 +41,8 @@ public class StudentController {
    *
    * @return　受講生詳細一覧(全件)
    */
-  @Operation(summary = "一覧検索", description = "受講生の一覧を検索します。")
-  @GetMapping("/studentList")
+  @Operation(summary = "受講生一覧検索", description = "受講生の一覧を検索します。")
+  @GetMapping("/students")
   public List<StudentDetail> getStudentList() {
     return service.searchStudentList();
   }
@@ -54,8 +54,8 @@ public class StudentController {
    * @param request 検索条件
    * @return 検索結果のリスト
    */
-  @Operation(summary = "受講生複合検索", description = "条件に合致する受講生情報を検索します。")
-  @GetMapping("/students")
+  @Operation(summary = "受講生条件検索", description = "条件に合致する受講生情報を検索します。")
+  @GetMapping("/students/search")
   public List<StudentSearchDetail> getStudents(@ModelAttribute StudentSearchCriteria request) {
     return service.searchStudents(request);
   }
@@ -67,8 +67,8 @@ public class StudentController {
    * @param id　受講生ID
    * @return　受講生詳細
    */
-  @Operation(summary ="詳細一覧検索", description = "受講生の詳細一覧検索します。")
-  @GetMapping("/student/{id}")
+  @Operation(summary ="受講生個別検索", description = "受講生の個別検索をします。")
+  @GetMapping("/students/{id}")
   public StudentDetail getStudent(@PathVariable Long id) {
     return service.searchStudent(id);
   }
@@ -80,7 +80,7 @@ public class StudentController {
    *@return 実行結果
    */
   @Operation(summary = "受講生登録", description = "受講生情報を登録します。")
-  @PostMapping("/registerStudent")
+  @PostMapping("/students")
   public ResponseEntity<Void> registerStudent(@Valid @RequestBody RegisterStudentRequest request) {
     service.registerStudent(request);
     return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -93,7 +93,7 @@ public class StudentController {
    * @return　実行結果(HTTP 204 No Content)
    */
   @Operation(summary ="受講生更新", description ="受講生情報を更新します。")
-  @PutMapping("/updateStudent")
+  @PutMapping("/students")
   public ResponseEntity<Void> updateStudent(@Valid @RequestBody UpdateStudentRequest request) {
     service.updateStudent(request);
     return ResponseEntity.noContent().build();

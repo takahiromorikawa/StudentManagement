@@ -1,5 +1,6 @@
 package raisetech.student.management.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ public class CourseStatusController {
    *
    * @return 受講生コースステータスのリスト
    */
+  @Operation(summary = "申込み状況の一覧検索", description = "申込み状況の一覧を検索します。")
   @GetMapping
   public List<CourseStatusResponse> getAllStatuses() {
     List<CourseStatus> statuses = service.findAll();
@@ -45,6 +47,7 @@ public class CourseStatusController {
    * @param studentCourseId 受講生コースID
    * @return 受講生コースステータス
    */
+  @Operation(summary = "申込み状況の個別検索", description = "申込み状況の個別検索します。")
   @GetMapping("/{studentCourseId}")
   public CourseStatusResponse getStatus(@PathVariable Long studentCourseId) {
     CourseStatus status = service.findByStudentCourseId(studentCourseId);
@@ -56,6 +59,7 @@ public class CourseStatusController {
    *
    * @param request ステータス登録情報
    */
+  @Operation(summary = "申込み状況の登録", description = "申込み状況の登録をします。")
   @PostMapping
   public ResponseEntity<Void> register(@RequestBody @Valid CourseStatusRequest request) {
     service.register(
@@ -70,12 +74,17 @@ public class CourseStatusController {
    *
    * @param request ステータス更新情報
    */
-  @PutMapping
-  public ResponseEntity<Void> update(@RequestBody @Valid CourseStatusRequest request) {
+  @Operation(summary = "申込み状況の更新", description = "申込み状況の更新をします。")
+  @PutMapping("/{id}/status")
+  public ResponseEntity<Void> update(
+      @PathVariable Long id,
+      @RequestBody @Valid CourseStatusRequest request) {
+
     service.updateStatus(
-        request.getStudentCourseId(),
+        id,
         request.getCourseStatus()
     );
+
     return ResponseEntity.noContent().build();
   }
 
