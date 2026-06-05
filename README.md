@@ -42,25 +42,16 @@ JavaやSpring Bootの学習成果を形にするために作成しました。
 
 ## 使用イメージ
 ### 絞り込み検索
-![検索条件絞り込み](images/検索条件絞り込み.gif)
-
-[▶ MOV動画を見る](images/検索条件絞り込みの修正.mov)
+![検索条件絞り込み](images/検索条件絞り込みの修正.gif)
 
 ### 新規登録
-![受講生新規登録](images/受講生新規登録.gif)
-
-[▶ MOV動画を見る](images/新規登録修正.mov)
+![新規登録](images/新規登録修正.gif)
 
 ### 削除
-![更新処理(論理削除)](images/更新処理(論理削除).gif)
-
-[▶ MOV動画を見る](images/削除修正.mov)
+![論理削除](images/削除修正.gif)
 
 ### 申込状況を更新
-![申込状況更新](images/申込状況更新.gif)
-
-[▶ MOV動画を見る](images/申込み状況更新修正.mov)
-
+![申込状況更新](images/申込み状況更新修正.gif)
 
 ### フォームバリデーション(新規登録)
 <img src="images/validation.new.png" width="60%">
