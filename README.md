@@ -15,7 +15,10 @@ JavaやSpring Bootの学習成果を形にするために作成しました。
 ![badge](https://img.shields.io/badge/Java-25-ED8B00?logo=openjdk&logoColor=ED8B00)
 ![badge](https://img.shields.io/badge/SpringBoot-3.2-%236DB33F?logo=spring)
 
-### DB
+### インフラ・DB
+![badge](https://img.shields.io/badge/AWS-EC2-FF9900?logo=amazonec2&labelColor=cccccc)
+![badge](https://img.shields.io/badge/AWS-RDS-527FFF?logo=amazonrds&labelColor=cccccc)
+![badge](https://img.shields.io/badge/AWS-ALB-8C4FFF?logo=awselasticloadbalancing&labelColor=cccccc)
 ![badge](https://img.shields.io/badge/MySQL-%234479A1?logo=mysql&logoColor=white)
 
 ### 使用ツール
@@ -89,6 +92,9 @@ JavaやSpring Bootの学習成果を形にするために作成しました。
 #### 申込状況の更新フロー
 ![](images/申込状況の更新フロー修正.png)
 
+### インフラ構成図
+![](images/インフラ構成図.jpeg)
+
 ## テスト
 JUnitを用いて単体テストを実装しました。
 
@@ -133,7 +139,8 @@ Spring Boot の MVC アーキテクチャを意識し、責務ごとにクラス
 これにより、責務を分離し、保守しやすい構成を意識しました。
 
 ## 今後の課題
-一つ目は、クラウド環境へのデプロイを行うことです。<br>現在はローカル環境のみで動作していますが、今後はAWS（Amazon Web Services）を活用し、EC2インスタンスを構築して、本アプリケーションをオンライン上に公開する予定です。具体的には、VPCによる安全なネットワーク設計と、独自ドメインによるアクセスを目標としています。
+~~一つ目は、クラウド環境へのデプロイを行うことです。~~ (2026.06.09完了)<br>~~現在はローカル環境のみで動作していますが、今後はAWS（Amazon Web Services）を活用し、EC2インスタンスを構築して、本アプリケーションをオンライン上に公開する予定です~~。~~具体的には、VPCによる安全なネットワーク設計と、独自ドメインによるアクセスを目標としています。~~
+<br>WebサイトのURLを「http」から「https」へ変更する「常時SSL化」にすること。
 <br>
 <br>
 二つ目は、Reactによるモダンなフロントエンドの実装です。<br>ユーザー体験（UX）の向上を目指し、フロントエンドにReactを採用する予定です。これにより、ページ遷移のないスムーズな操作感（SPA）を実現し、より直感的で高速なインターフェースを提供したいです。
