@@ -8,3 +8,6 @@ INSERT INTO students_courses (start, endplan, course_name, students_ID, id_bigin
                                                                                        ('2026-04-18 16:25:55', '2026-04-18 16:25:55', 'AWSコース', 8, 2),
                                                                                        ('2026-04-18 18:44:19', '2026-04-18 18:44:19', 'お絵描きコース', 9, 3);
 
+ALTER TABLE students ALTER COLUMN ID RESTART WITH 10;
+ALTER TABLE students_courses ALTER COLUMN id_bigint RESTART WITH 4;
+
