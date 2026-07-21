@@ -63,7 +63,7 @@ jobs:
           script: |
             if [ -f /etc/systemd/system/StudentManagement.service ]; then
               echo "already exists Service File"
-            else
+                        else
               sudo tee /etc/systemd/system/StudentManagement.service > /dev/null <<EOF
               [Unit]
               Description=StudentManagement App
