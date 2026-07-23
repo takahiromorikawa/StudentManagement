@@ -1,11 +1,17 @@
-name: Java CI
+name: Java CD
 
 on:
-  push:
   pull_request:
+    branches:
+      - main
+
+env:
+  SRC_PATH: 'build/libs/*.jar'
+  DEST_PATH: '/home/ec2-user/StudentManagement.jar'
 
 jobs:
-  build:
+  deploy:
+    environment: production
     runs-on: ubuntu-latest
 
     steps:
@@ -30,3 +36,48 @@ jobs:
         with:
           name: test-report
           path: build/reports/tests/test
+
+      - name: Build with Gradle Wrapper
+        run: ./gradlew bootJar
+
+      - name: SCP Copy Application to EC2
+        env:
+          PRIVATE_KEY: ${{ secrets.AWS_EC2_PRIVATE_KEY }}
+        run: |
+          echo "$PRIVATE_KEY" > private_key
+          chmod 600 private_key
+
+          scp -o StrictHostKeyChecking=no -i private_key \
+            $SRC_PATH \
+            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:$DEST_PATH
+
+          rm -f private_key
+
+      - name: SCP Service File
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.AWS_EC2_PRIVATE_KEY }}
+          source: "StudentManagement.service"
+          target: "/home/ec2-user"
+
+      - name: SSH Application Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.AWS_EC2_PRIVATE_KEY }}
+          envs: DEST_PATH
+          script: |
+            if [ ! -f /etc/systemd/system/StudentManagement.service ]; then
+              sudo mv /home/ec2-user/StudentManagement.service /etc/systemd/system/
+            fi
+
+            sudo systemctl daemon-reload
+
+            if systemctl is-active --quiet StudentManagement; then
+              sudo systemctl restart StudentManagement
+            else
+              sudo systemctl start StudentManagement
+            fi
